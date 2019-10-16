@@ -5,7 +5,7 @@ const FlexPluginScripts = require('../../../sub-commands/flex-plugin-scripts');
  */
 class FlexPluginsDeploy extends FlexPluginScripts {
   constructor(argv, config, secureStorage) {
-    super(argv, config, secureStorage);
+    super(argv, config, secureStorage, { strict: false });
 
     this.exit = process.exit;
     process.exit = exitCode => {
@@ -32,5 +32,7 @@ class FlexPluginsDeploy extends FlexPluginScripts {
     return this.run();
   }
 }
+
+FlexPluginsDeploy.description = 'Builds and deploys your Flex plugin to Twilio Assets';
 
 module.exports = FlexPluginsDeploy;

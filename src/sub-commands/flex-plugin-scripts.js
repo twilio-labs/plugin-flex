@@ -9,9 +9,10 @@ const clear = require('clear');
  * This will ensure the script is running on a Flex-plugin project, otherwise will throw an error
  */
 class FlexPluginScripts extends TwilioClientCommand {
-  constructor(argv, config, secureStorage) {
+  constructor(argv, config, secureStorage, opts) {
     super(argv, config, secureStorage);
 
+    this.opts = opts || {};
     this.showHeaders = true;
     this.cwd = process.cwd();
     this.clear = clear;
@@ -20,6 +21,10 @@ class FlexPluginScripts extends TwilioClientCommand {
 
     if (!this.isPluginFolder()) {
       throw new Error(`${this.cwd} directory is not a flex plugin directory`);
+    }
+
+    if (opts.strict === false) {
+      this.constructor.strict = false;
     }
   }
 
