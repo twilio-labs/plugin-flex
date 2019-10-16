@@ -38,7 +38,10 @@ class FlexPluginScripts extends TwilioClientCommand {
    * @param scriptName  the script name
    */
   async runScript(scriptName) {
-    await scripts(scriptName);
+    const args = process.argv.slice(3);
+    args.unshift(scriptName);
+
+    await scripts(...args);
   }
 }
 
