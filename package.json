@@ -16,7 +16,7 @@
   "files": [
     "/oclif.manifest.json",
     "/src",
-    "/yarn.lock",
+    "/package-lock.json",
     "LICENSE",
     "README.md"
   ],
