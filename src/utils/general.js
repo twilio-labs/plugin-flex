@@ -8,7 +8,7 @@ const runInformation = 'This command needs to be invoked inside a plugin directo
  * @returns {string} the updated command
  */
 module.exports.createDescription = (description, inDirectory) => {
-  description = `${description.trim('.')}.`;
+  description = `${description.trim().replace(/\.$/, '')}.`;
   if (!inDirectory) {
     return description;
   }
