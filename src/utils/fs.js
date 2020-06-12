@@ -6,7 +6,7 @@ const path = require('path');
  * @param files the path to files to check
  * @returns {boolean}
  */
-const filesExist = (...files) => files.map(fs.existsSync).every((resp) => resp);
+const filesExist = (...files) => files.map(fs.existsSync).every(Boolean);
 
 /**
  * Reads and parses a JSON file
