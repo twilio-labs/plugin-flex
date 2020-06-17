@@ -54,7 +54,7 @@ declare module '@twilio/cli-test' {
   type TwilioCliTest<C extends TwilioClientCommand> = FancyTypes.Base<FancyTypes.Context & TestCmd, {
     twilioFakeProfile: {
       output: {
-        configData: typeof ConfigData;
+        userConfig: typeof ConfigData;
       };
       args: [typeof ConfigData];
     };

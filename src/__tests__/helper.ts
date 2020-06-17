@@ -14,7 +14,7 @@ export type SecureStorage = typeof services.secureStorage.SecureStorage;
 chai.use(sinonChai);
 
 interface Context<C> {
-  configData: typeof ConfigData;
+  userConfig: typeof ConfigData;
   config: typeof Config;
   testCmd: C;
 }
