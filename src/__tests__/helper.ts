@@ -1,4 +1,5 @@
-// / <reference path="../module.d.ts" />
+// eslint-disable-next-line spaced-comment, @typescript-eslint/triple-slash-reference
+/// <reference path="../module.d.ts" />
 
 import { services } from '@twilio/cli-core';
 import { expect, test } from '@twilio/cli-test';
@@ -99,6 +100,7 @@ export const createTest = <C>(command: new (...args: any[]) => C) => {
   return {
     sinon: sinon.createSandbox(),
     start: (args = []) => {
+      // @ts-ignore
       return pluginTest
         .twilioFakeProfile(ConfigData)
         .twilioCliEnv(Config)
