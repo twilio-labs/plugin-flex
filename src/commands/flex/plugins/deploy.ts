@@ -91,7 +91,7 @@ export default class FlexPluginsDeploy extends FlexPlugin {
       const pluginVersion = await this.pluginVersionsClient.latest(this.pkg.name);
       currentVersion = (pluginVersion && pluginVersion.version) || '0.0.0';
     } catch (e) {
-      // No-op - no plugin exist yet; we'll create it later.
+      // No-op - no plugin exists yet; we'll create it later.
     }
 
     const nextVersion = this._flags.version || (semver.inc(currentVersion, this.bumpLevel) as string);
