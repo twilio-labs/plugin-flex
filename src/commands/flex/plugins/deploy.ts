@@ -27,6 +27,7 @@ export default class FlexPluginsDeploy extends FlexPlugin {
     version: flags.string({
       exclusive: ['patch', 'minor', 'major'],
     }),
+    public: flags.boolean(),
     changelog: flags.string(),
   };
 
@@ -105,6 +106,9 @@ export default class FlexPluginsDeploy extends FlexPlugin {
     // Set the plugin version
     this.scriptArgs.push('version', nextVersion);
     this.scriptArgs.push('--pilot-plugins-api');
+    if (this._flags.public) {
+      this.scriptArgs.push('--public');
+    }
   }
 
   /**
