@@ -17,7 +17,7 @@ export default abstract class InformationFlexPlugin<T> extends FlexPlugin {
 
   protected static ACCESS_FIELDS = ['private', 'isprivate'];
 
-  protected constructor(argv: string[], config: ConfigData, secureStorage: SecureStorage) {
+  public constructor(argv: string[], config: ConfigData, secureStorage: SecureStorage) {
     super(argv, config, secureStorage, { runInDirectory: false });
 
     this.scriptArgs = [];
@@ -27,6 +27,7 @@ export default abstract class InformationFlexPlugin<T> extends FlexPlugin {
    * Returns the formatted header field
    * @param key
    */
+  /* istanbul ignore next */
   private static getHeader(key: string) {
     return toSentenceCase(key);
   }
@@ -36,6 +37,7 @@ export default abstract class InformationFlexPlugin<T> extends FlexPlugin {
    * @param key
    * @param value
    */
+  /* istanbul ignore next */
   private static getValue(key: string, value: string | boolean) {
     key = key.toLowerCase();
 
@@ -96,6 +98,7 @@ export default abstract class InformationFlexPlugin<T> extends FlexPlugin {
    * @param object    the object to print
    * @param ignoreList  the keys in the object to ignore
    */
+  /* istanbul ignore next */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   printPretty<O extends { [key: string]: any }>(object: O, ...ignoreList: (keyof O)[]) {
     Object.keys(object)
@@ -110,6 +113,7 @@ export default abstract class InformationFlexPlugin<T> extends FlexPlugin {
    * @param key the key
    * @param value the value
    */
+  /* istanbul ignore next */
   printHeader(key: string, value?: string | boolean) {
     if (value === undefined) {
       this._logger.info(`**[[${InformationFlexPlugin.getHeader(key)}:]]**`);
@@ -125,6 +129,7 @@ export default abstract class InformationFlexPlugin<T> extends FlexPlugin {
    * @param key
    * @param otherKeys
    */
+  /* istanbul ignore next */
   printVersion(key: string, ...otherKeys: string[]) {
     if (otherKeys.length) {
       this._logger.info(`**++${key}++** ${otherKeys.join('')}`);

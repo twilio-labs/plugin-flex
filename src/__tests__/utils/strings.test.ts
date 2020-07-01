@@ -19,5 +19,10 @@ describe('Utils/Strings', () => {
       expect(stringsUtils.toSentenceCase('isPrivate')).to.equal('Access');
       expect(stringsUtils.toSentenceCase('isActive')).to.equal('Status');
     });
+
+    it('should convert multiple words', () => {
+      expect(stringsUtils.toSentenceCase('basicNameYo')).to.equal('Basic Name Yo');
+      expect(stringsUtils.toSentenceCase('basicNameYoWithSid')).to.equal('Basic Name Yo With SID');
+    });
   });
 });

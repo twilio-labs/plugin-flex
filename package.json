@@ -38,8 +38,8 @@
     }
   },
   "dependencies": {
-    "@oclif/command": "^1.6.1",
-    "@oclif/config": "^1.15.1",
+    "@oclif/command": "^1.7.0",
+    "@oclif/config": "^1.16.0",
     "@oclif/parser": "^3.8.5",
     "@twilio/cli-core": "5.6.0",
     "create-flex-plugin": "4.3.1-alpha.0",
@@ -49,7 +49,7 @@
     "flex-plugins-api-client": "^0.12.1",
     "flex-plugins-api-toolkit": "^0.12.1",
     "flex-plugins-utils-exception": "^0.10.0",
-    "flex-plugins-utils-logger": "/Users/ktalebian/Projects/github/twilio-labs/flex-plugins-utils/packages/flex-plugins-utils-logger",
+    "flex-plugins-utils-logger": "^0.10.1",
     "lodash.startcase": "^4.4.0",
     "semver": "^7.3.2",
     "yargs": "^15.3.1"
