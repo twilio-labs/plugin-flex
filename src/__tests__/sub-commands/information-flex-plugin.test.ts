@@ -2,7 +2,6 @@ import { TwilioApiError } from 'flex-plugins-utils-exception';
 
 import { expect, createTest } from '../framework';
 import InformationFlexPlugin from '../../sub-commands/information-flex-plugin';
-import * as fs from '../../utils/fs';
 
 describe('SubCommands/InformationFlexPlugin', () => {
   interface Sample {
@@ -19,7 +18,7 @@ describe('SubCommands/InformationFlexPlugin', () => {
       // No-op
     }
 
-    print(sample: Sample) {
+    print() {
       // No-op
     }
   }
