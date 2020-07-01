@@ -21,7 +21,7 @@ export default class FlexPluginsListPlugins extends InformationFlexPlugin<ListPl
     this.printHeader('Active Plugins');
     activePlugins.forEach(this._print.bind(this));
     this._logger.newline();
-    this.printHeader('InActive Plugins');
+    this.printHeader('Inactive Plugins');
     inactivePlugins.forEach(this._print.bind(this));
   }
 
