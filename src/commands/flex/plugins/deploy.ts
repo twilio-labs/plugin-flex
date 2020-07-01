@@ -15,6 +15,7 @@ export default class FlexPluginsDeploy extends FlexPlugin {
   static description = createDescription('Builds and deploys Flex plugin to Twilio Assets', true);
 
   static flags = {
+    ...FlexPlugin.flags,
     patch: flags.boolean({
       exclusive: ['minor', 'major', 'version'],
     }),

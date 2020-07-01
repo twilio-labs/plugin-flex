@@ -12,6 +12,7 @@ import {
 import { TwilioError } from 'flex-plugins-utils-exception';
 import dayjs from 'dayjs';
 import { flags } from '@oclif/parser';
+import ReleasesClient from 'flex-plugins-api-client/dist/clients/releases';
 
 import { filesExist, readJSONFile } from '../utils/fs';
 import { TwilioCliError } from '../exceptions';
@@ -24,7 +25,7 @@ interface FlexPluginOption {
 export type ConfigData = typeof services.config.ConfigData;
 export type SecureStorage = typeof services.secureStorage.SecureStorage;
 
-interface Flag {
+export interface FlexPluginFlags {
   json: boolean;
 }
 
@@ -32,7 +33,7 @@ interface Flag {
  * Base class for all flex-plugin * scripts.
  * This will ensure the script is running on a Flex-plugin project, otherwise will throw an error
  */
-export default abstract class FlexPlugin extends baseCommands.TwilioClientCommand {
+export default class FlexPlugin extends baseCommands.TwilioClientCommand {
   static flags = {
     json: flags.boolean(),
   };
@@ -59,6 +60,8 @@ export default abstract class FlexPlugin extends baseCommands.TwilioClientComman
   private _pluginVersionsClient?: PluginVersionsClient;
 
   private _configurationsClient?: ConfigurationsClient;
+
+  private _releasesClient?: ReleasesClient;
 
   constructor(argv: string[], config: ConfigData, secureStorage: SecureStorage, opts: Partial<FlexPluginOption>) {
     super(argv, config, secureStorage);
@@ -138,6 +141,14 @@ export default abstract class FlexPlugin extends baseCommands.TwilioClientComman
     return this._configurationsClient;
   }
 
+  get releasesClient() {
+    if (!this._releasesClient) {
+      throw new TwilioCliError('ReleasesClient is not initialized yet');
+    }
+
+    return this._releasesClient;
+  }
+
   /**
    * The main run command
    * @returns {Promise<void>}
@@ -155,6 +166,7 @@ export default abstract class FlexPlugin extends baseCommands.TwilioClientComman
     this._pluginsClient = new PluginsClient(httpClient);
     this._pluginVersionsClient = new PluginVersionsClient(httpClient);
     this._configurationsClient = new ConfigurationsClient(httpClient);
+    this._releasesClient = new ReleasesClient(httpClient);
 
     if (!this.skipEnvironmentalSetup) {
       this.setupEnvironment();
@@ -215,6 +227,7 @@ export default abstract class FlexPlugin extends baseCommands.TwilioClientComman
    * Parses the timestamp
    * @param timestamp
    */
+  /* istanbul ignore next */
   parseDate(timestamp: string) {
     return dayjs(timestamp).format('MMM DD, YYYY H:mm:ssA');
   }
@@ -224,15 +237,19 @@ export default abstract class FlexPlugin extends baseCommands.TwilioClientComman
    * complete
    * @returns {Promise<void>}
    */
+  /* istanbul ignore next */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async doRun(): Promise<any | void> {
-    throw new Error('Abstract class method must be implemented');
+    throw new Error('Abstract method must be implemented');
   }
 
   /**
    * Abstract method for getting the flags
    * @private
    */
-  abstract get _flags(): Flag;
+  get _flags(): FlexPluginFlags {
+    return this.parse(FlexPlugin).flags;
+  }
 
   /**
    * Whether this is a JSON response
