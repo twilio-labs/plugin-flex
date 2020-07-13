@@ -7,14 +7,15 @@ import FlexPlugin from '../../../sub-commands/flex-plugin';
  * Starts the dev-server for building and iterating on a flex-plugin
  */
 export default class FlexPluginsStart extends FlexPlugin {
-  static description = createDescription('Starts a dev-server to build the Flex plugin locally', true);
+  static description = createDescription('Starts a dev-server to build the Flex plugin locally', false);
 
   static flags = {
     ...FlexPlugin.flags,
     name: flags.string({
       multiple: true,
+      char: 'n',
     }),
-    includeremote: flags.boolean(),
+    'include-remote': flags.boolean(),
   };
 
   /**
@@ -22,19 +23,24 @@ export default class FlexPluginsStart extends FlexPlugin {
    */
   async doRun() {
     const names = this._flags.name;
-    const includeRemote = this._flags.includeremote;
-    const flexArgs: string[] = ['flex'];
+    const includeRemote = this._flags['include-remote'];
+    const flexInput: string[] = [];
+    const pluginInput: string[][] = [];
 
     for (let i = 0; names && i < names.length; i++) {
-      flexArgs.push('--name', names[i]);
-      await this.runScript('start', ['plugin', '--name', names[i]]);
+      flexInput.push('--name', names[i]);
+      pluginInput.push(['--name', names[i]]);
     }
 
     if (includeRemote) {
-      flexArgs.push('--include-remote');
+      flexInput.push('--include-remote');
     }
 
-    await this.runScript('start', flexArgs);
+    await this.runScript('start', ['flex', ...flexInput]);
+
+    for (let i = 0; pluginInput && i < pluginInput.length; i++) {
+      await this.runScript('start', ['plugin', ...pluginInput[i]]);
+    }
   }
 
   /**

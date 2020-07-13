@@ -87,6 +87,7 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
 
       this.exit(exitCode);
     };
+    this.opts.runInDirectory = false;
   }
 
   /**
@@ -101,6 +102,7 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
     return filesExist(join(this.cwd, 'public', 'appConfig.js'));
   }
 
+  // I think this is the error bc this.cwd is wrong/doesn't have a package.json
   /**
    * Gets the package.json
    * @returns {object}
