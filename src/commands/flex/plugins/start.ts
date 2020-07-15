@@ -1,7 +1,7 @@
 import { flags } from '@oclif/command';
 
 import { createDescription } from '../../../utils/general';
-import FlexPlugin from '../../../sub-commands/flex-plugin';
+import FlexPlugin, { ConfigData, SecureStorage } from '../../../sub-commands/flex-plugin';
 
 /**
  * Starts the dev-server for building and iterating on a flex-plugin
@@ -17,6 +17,14 @@ export default class FlexPluginsStart extends FlexPlugin {
     }),
     'include-remote': flags.boolean(),
   };
+
+  constructor(argv: string[], config: ConfigData, secureStorage: SecureStorage) {
+    super(argv, config, secureStorage, {});
+
+    if (this._flags['include-remote'] || this._flags.name) {
+      this.opts.runInDirectory = false;
+    }
+  }
 
   /**
    * @override
@@ -36,10 +44,16 @@ export default class FlexPluginsStart extends FlexPlugin {
       flexInput.push('--include-remote');
     }
 
-    await this.runScript('start', ['flex', ...flexInput]);
+    if (flexInput) {
+      await this.runScript('start', ['flex', ...flexInput]);
+    }
 
     for (let i = 0; pluginInput && i < pluginInput.length; i++) {
       await this.runScript('start', ['plugin', ...pluginInput[i]]);
+    }
+
+    if (!flexInput && !pluginInput) {
+      await this.runScript('start');
     }
   }
 

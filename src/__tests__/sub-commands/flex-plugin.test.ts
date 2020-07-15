@@ -22,9 +22,9 @@ describe('SubCommands/FlexPlugin', () => {
       const result = cmd.isPluginFolder();
 
       expect(result).to.equal(true);
-      expect(fs.filesExist).not.to.have.been.called;
+      expect(fs.filesExist).to.have.been.calledOnce;
     })
-    .it('should test isPluginFolder to be false');
+    .it('should test isPluginFolder to be true');
 
   start()
     .setup(async () => {
@@ -33,10 +33,10 @@ describe('SubCommands/FlexPlugin', () => {
     .test((cmd) => {
       const result = cmd.isPluginFolder();
 
-      expect(result).to.equal(true);
-      expect(fs.filesExist).not.have.been.called;
+      expect(result).to.equal(false);
+      expect(fs.filesExist).to.have.been.calledOnce;
     })
-    .it('should test isPluginFolder to be true');
+    .it('should test isPluginFolder to be false');
 
   start()
     .test(async (cmd, _, done) => {

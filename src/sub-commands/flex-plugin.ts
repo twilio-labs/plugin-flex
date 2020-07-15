@@ -87,7 +87,6 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
 
       this.exit(exitCode);
     };
-    this.opts.runInDirectory = false;
   }
 
   /**
