@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@oclif/command": "^1.6.1",
-    "@oclif/config": "^1.15.1",
+    "@oclif/config": "^1.16.0",
     "@twilio/cli-core": "5.1.0",
     "clear": "^0.1.0",
     "create-flex-plugin": "^3.11.0",
