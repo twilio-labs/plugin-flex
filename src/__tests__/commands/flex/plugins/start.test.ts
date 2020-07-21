@@ -2,21 +2,24 @@ import { expect, createTest } from '../../../framework';
 import FlexPluginsStart from '../../../../commands/flex/plugins/start';
 
 describe('Commands/FlexPluginsStart', () => {
-  const { sinon, start } = createTest(FlexPluginsStart);
+  const { sinon, start: _start } = createTest(FlexPluginsStart);
 
   afterEach(() => {
     sinon.restore();
   });
 
-  start()
-    .setup((instance) => {
-      sinon.stub(instance, 'runScript').returnsThis();
-    })
-    .test(async (instance) => {
-      await instance.doRun();
+  const start = (args?: string[]) =>
+    _start(args).setup(async (instance) => {
+      sinon.stub(instance, 'doRun').returnsThis();
+      sinon.stub(instance, 'isPluginFolder').returns(true);
+      await instance.run();
+    });
 
-      expect(instance.runScript).to.have.been.calledOnce;
-      expect(instance.runScript).to.have.been.calledWith('start');
+  start(['start', '--name', 'plugin-testOne', '--name', 'plugin-testTwo', '--include-remote'])
+    .test(async (instance) => {
+      expect(instance._flags.name.includes('plugin-testOne'));
+      expect(instance._flags.name.includes('plugin-testTwo'));
+      expect(instance._flags['include-remote'].valueOf()).to.be.true;
     })
-    .it('should run start script');
+    .it('should read the name and include-remote flags');
 });

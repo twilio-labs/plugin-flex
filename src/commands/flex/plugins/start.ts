@@ -1,7 +1,10 @@
+import { join } from 'path';
+
 import { flags } from '@oclif/command';
 
 import { createDescription } from '../../../utils/general';
 import FlexPlugin, { ConfigData, SecureStorage } from '../../../sub-commands/flex-plugin';
+import { filesExist } from '../../../utils/fs';
 
 /**
  * Starts the dev-server for building and iterating on a flex-plugin
@@ -32,28 +35,35 @@ export default class FlexPluginsStart extends FlexPlugin {
   async doRun() {
     const names = this._flags.name;
     const includeRemote = this._flags['include-remote'];
-    const flexInput: string[] = [];
-    const pluginInput: string[][] = [];
+    const flexArgs: string[] = [];
+    const pluginArgs: string[][] = [];
 
-    for (let i = 0; names && i < names.length; i++) {
-      flexInput.push('--name', names[i]);
-      pluginInput.push(['--name', names[i]]);
+    if (names) {
+      for (const name of names) {
+        flexArgs.push('--name', name);
+        pluginArgs.push(['--name', name]);
+      }
     }
 
     if (includeRemote) {
-      flexInput.push('--include-remote');
+      flexArgs.push('--include-remote');
     }
 
-    if (flexInput) {
-      await this.runScript('start', ['flex', ...flexInput]);
+    // If running in a plugin directory, append it to the names
+    if (filesExist(join(this.cwd, 'public', 'appConfig.js')) && !flexArgs.includes(this.pkg.name)) {
+      flexArgs.push('--name', this.pkg.name);
+      pluginArgs.push(['--name', this.pkg.name]);
     }
 
-    for (let i = 0; pluginInput && i < pluginInput.length; i++) {
-      await this.runScript('start', ['plugin', ...pluginInput[i]]);
-    }
-
-    if (!flexInput && !pluginInput) {
-      await this.runScript('start');
+    if (flexArgs.length && pluginArgs.length) {
+      await this.runScript('start', ['flex', ...flexArgs]);
+      for (let i = 0; pluginArgs && i < pluginArgs.length; i++) {
+        await this.runScript('start', ['plugin', ...pluginArgs[i]]);
+      }
+    } else if (includeRemote && !pluginArgs.length) {
+      await this.runScript('start', ['--include-remote']);
+    } else {
+      throw new Error('Incorrect format. Please follow the cli format guidelines.');
     }
   }
 
