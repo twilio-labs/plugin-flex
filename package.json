@@ -34,7 +34,7 @@
     }
   },
   "dependencies": {
-    "@oclif/command": "^1.6.1",
+    "@oclif/command": "^1.7.0",
     "@oclif/config": "^1.15.1",
     "@twilio/cli-core": "5.1.0",
     "clear": "^0.1.0",
