@@ -33,19 +33,17 @@ export default class FlexPluginsStart extends FlexPlugin {
    * @override
    */
   async doRun() {
-    const names = this._flags.name;
-    const includeRemote = this._flags['include-remote'];
     const flexArgs: string[] = [];
     const pluginArgs: string[][] = [];
 
-    if (names) {
-      for (const name of names) {
+    if (this._flags.name) {
+      for (const name of this._flags.name) {
         flexArgs.push('--name', name);
         pluginArgs.push(['--name', name]);
       }
     }
 
-    if (includeRemote) {
+    if (this._flags['include-remote']) {
       flexArgs.push('--include-remote');
     }
 
@@ -60,10 +58,6 @@ export default class FlexPluginsStart extends FlexPlugin {
       for (let i = 0; pluginArgs && i < pluginArgs.length; i++) {
         await this.runScript('start', ['plugin', ...pluginArgs[i]]);
       }
-    } else if (includeRemote && !pluginArgs.length) {
-      await this.runScript('start', ['--include-remote']);
-    } else {
-      throw new Error('Incorrect format. Please follow the cli format guidelines.');
     }
   }
 
