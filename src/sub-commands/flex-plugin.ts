@@ -8,14 +8,16 @@ import {
   PluginsClient,
   PluginVersionsClient,
   ConfigurationsClient,
+  ReleasesClient,
 } from 'flex-plugins-api-client';
 import { TwilioError } from 'flex-plugins-utils-exception';
 import dayjs from 'dayjs';
 import { flags } from '@oclif/parser';
-import ReleasesClient from 'flex-plugins-api-client/dist/clients/releases';
+import * as Errors from '@oclif/errors';
 
 import { filesExist, readJSONFile } from '../utils/fs';
 import { TwilioCliError } from '../exceptions';
+import { instanceOf } from '../utils/general';
 
 interface FlexPluginOption {
   strict: boolean;
@@ -47,6 +49,8 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
 
   protected readonly cwd: string;
 
+  protected readonly pluginRootDir: string;
+
   protected readonly skipEnvironmentalSetup: boolean;
 
   protected readonly _logger: Logger;
@@ -69,6 +73,7 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
     this.opts = { ...FlexPlugin.defaultOptions, ...opts };
     this.showHeaders = true;
     this.cwd = process.cwd();
+    this.pluginRootDir = join(__dirname, '../../');
     this.scriptArgs = process.argv.slice(3);
     this.skipEnvironmentalSetup = false;
     this._logger = new Logger({ isQuiet: false, markdown: true });
@@ -81,10 +86,6 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
     this.exit = process.exit;
     // @ts-ignore
     process.exit = (exitCode) => {
-      if (exitCode === 0) {
-        return;
-      }
-
       this.exit(exitCode);
     };
   }
@@ -94,10 +95,6 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
    * @returns {boolean}
    */
   isPluginFolder() {
-    if (!this.opts.runInDirectory) {
-      return true;
-    }
-
     return filesExist(join(this.cwd, 'public', 'appConfig.js'));
   }
 
@@ -176,9 +173,8 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
   async run() {
     await super.run();
 
-    if (!this.isPluginFolder()) {
-      this._logger.error(`${this.cwd} directory is not a flex plugin directory`);
-      throw new Error(`${this.cwd} directory is not a flex plugin directory`);
+    if (this.opts.runInDirectory && !this.isPluginFolder()) {
+      throw new TwilioCliError(`${this.cwd} directory is not a flex plugin directory.`);
     }
 
     const httpClient = new PluginServiceHTTPClient(this.twilioApiClient.username, this.twilioApiClient.password);
@@ -192,26 +188,28 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
       this.setupEnvironment();
     }
 
-    try {
-      if (!this.isJson) {
-        this._logger.notice(`Using profile **${this.currentProfile.id}** (${this.currentProfile.accountSid})`);
-        this._logger.newline();
-      }
+    if (!this.isJson) {
+      this._logger.notice(`Using profile **${this.currentProfile.id}** (${this.currentProfile.accountSid})`);
+      this._logger.newline();
+    }
 
-      const result = await this.doRun();
-      if (result && this.isJson && typeof result === 'object') {
-        this._logger.info(JSON.stringify(result));
-      }
-    } catch (e) {
-      if (e.instanceOf && e.instanceOf(TwilioError)) {
-        this._logger.error(e.message);
-        this.logger.error(e.message);
-      } else {
-        this._logger.error('Unexpected error occurred');
-        this._logger.info(e);
-      }
+    const result = await this.doRun();
+    if (result && this.isJson && typeof result === 'object') {
+      this._logger.info(JSON.stringify(result));
+    }
+  }
 
-      this.exit(1);
+  /**
+   * Cathes any thrown exception
+   * @param error
+   */
+  async catch(error: Error) {
+    if (instanceOf(error, TwilioError)) {
+      this._logger.error(error.message);
+    } else if (instanceOf(error, Errors.CLIError)) {
+      Errors.error(error.message);
+    } else {
+      super.catch(error);
     }
   }
 
@@ -231,8 +229,8 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
    */
   /* istanbul ignore next */
   async runScript(scriptName: string, argv = this.scriptArgs) {
-    // eslint-disable-next-line global-require, @typescript-eslint/no-require-imports
-    return require(`flex-plugin-scripts/dist/scripts/${scriptName}`).default(...argv);
+    // eslint-disable-next-line global-require, @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+    return require(`flex-plugin-scripts/dist/scripts/${scriptName}`).default(...argv, '--core-cwd', this.pluginRootDir);
   }
 
   /**
@@ -262,7 +260,7 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
   /* istanbul ignore next */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async doRun(): Promise<any | void> {
-    throw new Error('Abstract method must be implemented');
+    throw new TwilioCliError('Abstract method must be implemented');
   }
 
   /**

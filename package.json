@@ -1,6 +1,6 @@
 {
   "name": "@twilio-labs/plugin-flex",
-  "version": "1.1.0-next.0",
+  "version": "1.5.0-next.0",
   "description": "Create, develop and deploy Flex plugins using the Twilio CLI",
   "keywords": [
     "oclif-plugin"
@@ -40,22 +40,21 @@
   "dependencies": {
     "@oclif/command": "^1.7.0",
     "@oclif/config": "^1.16.0",
+    "@oclif/errors": "^1.3.3",
     "@oclif/parser": "^3.8.5",
     "@twilio/cli-core": "5.7.0",
-    "@twilio/flex-ui": "^1.20.1",
-    "@types/yargs": "^15.0.5",
-    "create-flex-plugin": "4.3.1-alpha.0",
+    "create-flex-plugin": "4.4.0-alpha.0",
     "dayjs": "^1.8.29",
     "fancy-test": "^1.4.9",
-    "flex-plugin": "^3.13.2",
-    "flex-plugin-scripts": "file:///Users/mmacdonald/Projects/github/flex-plugin-builder/packages/flex-plugin-scripts/",
-    "flex-plugins-api-client": "^0.13.0",
-    "flex-plugins-api-toolkit": "^0.13.0",
+    "flex-plugin": "4.2.0-alpha.0",
+    "flex-plugin-scripts": "4.4.1-alpha.0",
+    "flex-plugins-api-client": "^0.14.1",
+    "flex-plugins-api-toolkit": "^0.14.1",
     "flex-plugins-utils-exception": "^0.11.0",
-    "flex-plugins-utils-logger": "^0.11.0",
+    "flex-plugins-utils-logger": "^0.11.1",
     "lodash.startcase": "^4.4.0",
     "semver": "^7.3.2",
-    "yargs": "^15.4.0"
+    "yargs": "^15.4.1"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",
@@ -63,15 +62,15 @@
     "@twilio/cli-test": "^2.1.1",
     "@types/chai": "^4.2.11",
     "@types/lodash.startcase": "^4.4.6",
-    "@types/mocha": "^7.0.2",
-    "@types/node": "^14.0.20",
+    "@types/mocha": "^8.0.0",
+    "@types/node": "^14.0.24",
     "@types/semver": "^7.3.1",
     "@types/sinon": "^9.0.4",
     "@types/sinon-chai": "^3.2.4",
     "chai": "^4.2.0",
-    "eslint": "^7.4.0",
-    "eslint-config-twilio-mocha": "^1.27.0",
-    "eslint-config-twilio-ts": "^1.27.0",
+    "eslint": "^7.5.0",
+    "eslint-config-twilio-mocha": "^1.28.0",
+    "eslint-config-twilio-ts": "^1.28.0",
     "globby": "^11.0.1",
     "husky": "^4.2.5",
     "mocha": "^8.0.1",
@@ -79,7 +78,7 @@
     "sinon": "^9.0.2",
     "sinon-chai": "^3.5.0",
     "ts-node": "^8.10.2",
-    "typescript": "^3.9.6"
+    "typescript": "^3.9.7"
   },
   "engines": {
     "node": ">=8.0.0"
