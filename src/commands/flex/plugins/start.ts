@@ -1,10 +1,7 @@
-import { join } from 'path';
-
 import { flags } from '@oclif/command';
 
 import { createDescription } from '../../../utils/general';
 import FlexPlugin, { ConfigData, SecureStorage } from '../../../sub-commands/flex-plugin';
-import { filesExist } from '../../../utils/fs';
 
 /**
  * Starts the dev-server for building and iterating on a flex-plugin
@@ -39,7 +36,9 @@ export default class FlexPluginsStart extends FlexPlugin {
     if (this._flags.name) {
       for (const name of this._flags.name) {
         flexArgs.push('--name', name);
-        pluginArgs.push(['--name', name]);
+        if (!name.includes('@remote')) {
+          pluginArgs.push(['--name', name]);
+        }
       }
     }
 
@@ -48,7 +47,7 @@ export default class FlexPluginsStart extends FlexPlugin {
     }
 
     // If running in a plugin directory, append it to the names
-    if (filesExist(join(this.cwd, 'public', 'appConfig.js')) && !flexArgs.includes(this.pkg.name)) {
+    if (this.isPluginFolder() && !flexArgs.includes(this.pkg.name)) {
       flexArgs.push('--name', this.pkg.name);
       pluginArgs.push(['--name', this.pkg.name]);
     }
