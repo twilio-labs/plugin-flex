@@ -2,7 +2,7 @@ import { expect, createTest } from '../../../framework';
 import FlexPluginsStart from '../../../../commands/flex/plugins/start';
 
 describe('Commands/FlexPluginsStart', () => {
-  const { sinon, start} = createTest(FlexPluginsStart);
+  const { sinon, start } = createTest(FlexPluginsStart);
 
   afterEach(() => {
     sinon.restore();
