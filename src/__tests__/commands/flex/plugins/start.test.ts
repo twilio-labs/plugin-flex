@@ -22,12 +22,12 @@ describe('Commands/FlexPluginsStart', () => {
       await instance.doRun();
 
       expect(instance.runScript).to.have.been.calledTwice;
-      expect(instance.runScript).to.have.been.calledWith('start', ['flex', '--name', 'plugin-test']);
-      expect(instance.runScript).to.have.been.calledWith('start', ['plugin', '--name', 'plugin-test']);
+      expect(instance.runScript).to.have.been.calledWith('start', ['flex', '--name', pkg.name]);
+      expect(instance.runScript).to.have.been.calledWith('start', ['plugin', '--name', pkg.name]);
     })
     .it('should run start script for the directory plugin');
 
-  start(['start', '--name', 'plugin-testOne', '--name', 'plugin-testTwo', '--include-remote'])
+  start(['--name', 'plugin-testOne', '--name', 'plugin-testTwo', '--include-remote'])
     .setup(async (instance) => {
       sinon.stub(instance, 'runScript').returnsThis();
       sinon.stub(instance, 'isPluginFolder').returns(false);
@@ -42,7 +42,7 @@ describe('Commands/FlexPluginsStart', () => {
     })
     .it('should read the name and include-remote flags');
 
-  start(['start', '--name', 'plugin-testOne'])
+  start(['--name', 'plugin-testOne'])
     .setup(async (instance) => {
       sinon.stub(instance, 'runScript').returnsThis();
       sinon.stub(instance, 'isPluginFolder').returns(false);
@@ -56,7 +56,7 @@ describe('Commands/FlexPluginsStart', () => {
     })
     .it('should process the one plugin');
 
-  start(['start', ''])
+  start([''])
     .setup(async (instance) => {
       sinon.stub(instance, 'runScript').returnsThis();
       sinon.stub(instance, 'isPluginFolder').returns(false);

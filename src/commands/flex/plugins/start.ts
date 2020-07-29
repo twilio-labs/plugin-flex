@@ -13,7 +13,6 @@ export default class FlexPluginsStart extends FlexPlugin {
     ...FlexPlugin.flags,
     name: flags.string({
       multiple: true,
-      char: 'n',
     }),
     'include-remote': flags.boolean(),
   };
