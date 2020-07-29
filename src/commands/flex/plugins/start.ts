@@ -54,6 +54,7 @@ export default class FlexPluginsStart extends FlexPlugin {
     if (flexArgs.length && pluginArgs.length) {
       await this.runScript('start', ['flex', ...flexArgs]);
       for (let i = 0; pluginArgs && i < pluginArgs.length; i++) {
+        await this.runScript('check-start', ['--name', pluginArgs[i]]);
         await this.runScript('start', ['plugin', '--name', pluginArgs[i]]);
       }
     }
