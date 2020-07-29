@@ -21,9 +21,10 @@ describe('Commands/FlexPluginsStart', () => {
     .test(async (instance) => {
       await instance.doRun();
 
-      expect(instance.runScript).to.have.been.calledTwice;
+      expect(instance.runScript).to.have.been.calledThrice;
       expect(instance.runScript).to.have.been.calledWith('start', ['flex', '--name', pkg.name]);
       expect(instance.runScript).to.have.been.calledWith('start', ['plugin', '--name', pkg.name]);
+      expect(instance.runScript).to.have.been.calledWith('check-start', ['--name', pkg.name]);
     })
     .it('should run start script for the directory plugin');
 
