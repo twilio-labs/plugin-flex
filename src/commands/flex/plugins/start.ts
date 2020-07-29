@@ -30,13 +30,13 @@ export default class FlexPluginsStart extends FlexPlugin {
    */
   async doRun() {
     const flexArgs: string[] = [];
-    const pluginArgs: string[] = [];
+    const pluginNames: string[] = [];
 
     if (this._flags.name) {
       for (const name of this._flags.name) {
         flexArgs.push('--name', name);
         if (!name.includes('@remote')) {
-          pluginArgs.push(name);
+          pluginNames.push(name);
         }
       }
     }
@@ -48,14 +48,14 @@ export default class FlexPluginsStart extends FlexPlugin {
     // If running in a plugin directory, append it to the names
     if (this.isPluginFolder() && !flexArgs.includes(this.pkg.name)) {
       flexArgs.push('--name', this.pkg.name);
-      pluginArgs.push(this.pkg.name);
+      pluginNames.push(this.pkg.name);
     }
 
-    if (flexArgs.length && pluginArgs.length) {
+    if (flexArgs.length && pluginNames.length) {
       await this.runScript('start', ['flex', ...flexArgs]);
-      for (let i = 0; pluginArgs && i < pluginArgs.length; i++) {
-        await this.runScript('check-start', ['--name', pluginArgs[i]]);
-        await this.runScript('start', ['plugin', '--name', pluginArgs[i]]);
+      for (let i = 0; pluginNames && i < pluginNames.length; i++) {
+        await this.runScript('check-start', ['--name', pluginNames[i]]);
+        await this.runScript('start', ['plugin', '--name', pluginNames[i]]);
       }
     }
   }
