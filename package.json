@@ -49,7 +49,7 @@
     "flex-plugin": "4.2.0-alpha.0",
     "flex-plugin-scripts": "4.5.3-alpha.0",
     "flex-plugins-api-client": "0.15.6",
-    "flex-plugins-api-toolkit": "0.15.6",
+    "flex-plugins-api-toolkit": "/Users/ktalebian/Projects/github/twilio/flex-plugins-api/packages/flex-plugins-api-toolkit",
     "flex-plugins-utils-exception": "^0.11.0",
     "flex-plugins-utils-logger": "^0.11.1",
     "lodash.startcase": "^4.4.0",
