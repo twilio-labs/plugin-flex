@@ -37,15 +37,15 @@ export interface FlexPluginFlags {
  * This will ensure the script is running on a Flex-plugin project, otherwise will throw an error
  */
 export default class FlexPlugin extends baseCommands.TwilioClientCommand {
+  static flags = {
+    json: flags.boolean(),
+  };
+
   protected static DATE_FIELDS = ['datecreated', 'dateupdated', 'created', 'updated'];
 
   protected static ACTIVE_FIELDS = ['active', 'isactive', 'status'];
 
   protected static ACCESS_FIELDS = ['private', 'isprivate'];
-
-  static flags = {
-    json: flags.boolean(),
-  };
 
   private static defaultOptions: FlexPluginOption = {
     strict: false,
@@ -102,7 +102,7 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
    * @param key
    */
   /* istanbul ignore next */
-  private static getHeader(key: string) {
+  public static getHeader(key: string) {
     return toSentenceCase(key);
   }
 
@@ -112,7 +112,7 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
    * @param value
    */
   /* istanbul ignore next */
-  private static getValue(key: string, value: string | boolean) {
+  public static getValue(key: string, value: string | boolean) {
     key = key.toLowerCase();
 
     if (FlexPlugin.DATE_FIELDS.includes(key)) {
@@ -329,9 +329,9 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
   /* istanbul ignore next */
   printVersion(key: string, ...otherKeys: string[]) {
     if (otherKeys.length) {
-      this._logger.info(`**++${key}++** ${otherKeys.join('')}`);
+      this._logger.info(`**@@${key}@@** ${otherKeys.join('')}`);
     } else {
-      this._logger.info(`**++${key}++**`);
+      this._logger.info(`**@@${key}@@**`);
     }
   }
 
