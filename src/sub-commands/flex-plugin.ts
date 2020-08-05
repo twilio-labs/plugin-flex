@@ -107,6 +107,15 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
   }
 
   /**
+   * Parses the timestamp
+   * @param timestamp
+   */
+  /* istanbul ignore next */
+  public static parseDate(timestamp: string) {
+    return dayjs(timestamp).format('MMM DD, YYYY H:mm:ssA');
+  }
+
+  /**
    * Returns the formatted value field
    * @param key
    * @param value
@@ -116,7 +125,7 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
     key = key.toLowerCase();
 
     if (FlexPlugin.DATE_FIELDS.includes(key)) {
-      return `..!!${value}!!..`;
+      return `..!!${FlexPlugin.parseDate(value as string)}!!..`;
     }
 
     if (FlexPlugin.ACTIVE_FIELDS.includes(key)) {
@@ -281,15 +290,6 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
     process.env.SKIP_CREDENTIALS_SAVING = 'true';
     process.env.TWILIO_ACCOUNT_SID = this.twilioClient.username;
     process.env.TWILIO_AUTH_TOKEN = this.twilioClient.password;
-  }
-
-  /**
-   * Parses the timestamp
-   * @param timestamp
-   */
-  /* istanbul ignore next */
-  parseDate(timestamp: string) {
-    return dayjs(timestamp).format('MMM DD, YYYY H:mm:ssA');
   }
 
   /**

@@ -15,7 +15,7 @@ export const parser = (input: string) => {
   }
 
   if (!input || !input.startsWith('FJ')) {
-    throw new TwilioCliError(`Identifier must of a ConfigurationSid instead got ${input}`);
+    throw new TwilioCliError(`Identifier must of a ConfigurationSid or 'active'; instead got ${input}`);
   }
 
   return input;
@@ -31,13 +31,12 @@ export default class FlexPluginsDiff extends FlexPlugin {
 
   static args = [
     {
-      name: 'oldId',
+      name: 'id1',
       required: true,
       parse: parser,
     },
     {
-      name: 'newId',
-      required: true,
+      name: 'id2',
       arse: parser,
     },
   ];
@@ -51,6 +50,12 @@ export default class FlexPluginsDiff extends FlexPlugin {
    */
   async doRun() {
     const diffs = await this.getDiffs();
+
+    const oldSidText = diffs.activeSid === diffs.oldSid ? `${diffs.oldSid} (active)` : diffs.oldSid;
+    const newSidText = diffs.activeSid === diffs.newSid ? `${diffs.newSid} (active)` : diffs.newSid;
+    this._logger.info(`Showing the changes from releasing **${oldSidText}** to **${newSidText}**`);
+    this._logger.newline();
+
     diffs.configuration.forEach((diff) => this.printDiff(diff));
     this._logger.newline();
 
@@ -79,10 +84,12 @@ export default class FlexPluginsDiff extends FlexPlugin {
    * Finds the diff
    */
   async getDiffs() {
+    // if only one argument is provided, it's because you are comparing "active to configId"
+    const { id1, id2 } = this._args;
     return this.pluginsApiToolkit.diff({
       resource: 'configuration',
-      oldIdentifier: this._args.oldId,
-      newIdentifier: this._args.newId,
+      oldIdentifier: id2 ? id1 : 'active',
+      newIdentifier: id2 ? id2 : id1,
     });
   }
 
@@ -98,10 +105,10 @@ export default class FlexPluginsDiff extends FlexPlugin {
 
     const header = FlexPlugin.getHeader(path);
     if (diff.hasDiff) {
-      if (before) {
+      if (!isNullOrUndefined(before)) {
         this._logger.info(`${prefix}--- ${header}: ${FlexPlugin.getValue(path, before)}--`);
       }
-      if (after) {
+      if (!isNullOrUndefined(after)) {
         this._logger.info(`${prefix}+++ ${header}: ${FlexPlugin.getValue(path, after)}++`);
       }
     } else {

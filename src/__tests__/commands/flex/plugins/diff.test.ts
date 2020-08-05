@@ -1,14 +1,20 @@
 /* eslint-disable camelcase */
-import { ConfigurationsDiff } from 'flex-plugins-api-toolkit/dist/tools/diff';
+import { Diff } from 'flex-plugins-api-toolkit';
 
 import { expect, createTest } from '../../../framework';
 import FlexPluginsDiff from '../../../../commands/flex/plugins/diff';
 
 describe('Commands/FlexPluginsDeploy', () => {
+  const configId1 = 'FJ00000000000000000000000000001';
+  const configId2 = 'FJ00000000000000000000000000002';
+
   const { sinon, start } = createTest(FlexPluginsDiff);
 
   const prefix = FlexPluginsDiff.pluginDiffPrefix;
-  const diffs: ConfigurationsDiff = {
+  const diffs: Diff = {
+    oldSid: configId1,
+    newSid: configId2,
+    activeSid: null,
     configuration: [
       {
         path: 'name',
@@ -61,7 +67,7 @@ describe('Commands/FlexPluginsDeploy', () => {
     sinon.restore();
   });
 
-  start(['FJ00000000000000000000000000001', 'FJ00000000000000000000000000002'])
+  start([configId1, configId2])
     .setup(async (instance) => {
       sinon.stub(instance, 'getDiffs').returns(Promise.resolve(diffs));
       sinon.stub(instance, 'printDiff').returnsThis();
