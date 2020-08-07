@@ -57,6 +57,7 @@
     "flex-plugins-utils-logger": "^0.13.0",
     "flex-plugins-utils-spawn": "^0.13.1",
     "lodash.startcase": "^4.4.0",
+    "mkdirp": "^1.0.4",
     "semver": "^7.3.2",
     "yargs": "^15.4.1"
   },
@@ -66,6 +67,7 @@
     "@twilio/cli-test": "^2.1.1",
     "@types/chai": "^4.2.12",
     "@types/lodash.startcase": "^4.4.6",
+    "@types/mkdirp": "^1.0.1",
     "@types/mocha": "^8.0.1",
     "@types/node": "^14.0.27",
     "@types/semver": "^7.3.1",

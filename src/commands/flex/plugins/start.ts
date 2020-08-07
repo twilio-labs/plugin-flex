@@ -1,8 +1,11 @@
 import { flags } from '@oclif/command';
 import { findPortAvailablePort, StartScript } from 'flex-plugin-scripts/dist/scripts/start';
+import semver from 'semver';
 
 import { createDescription } from '../../../utils/general';
 import FlexPlugin, { ConfigData, SecureStorage } from '../../../sub-commands/flex-plugin';
+import { readJSONFile } from '../../../utils/fs';
+import { TwilioCliError } from '../../../exceptions';
 
 /**
  * Starts the dev-server for building and iterating on a flex-plugin
@@ -76,6 +79,26 @@ export default class FlexPluginsStart extends FlexPlugin {
         this.spawnScript('start', ['plugin', '--name', pluginNames[i], '--port', port.toString()]);
       }
     }
+  }
+
+  async checkPlugin(pluginName: string) {
+    // read cli plugins json to get directory
+    const config = this.pluginsConfig;
+    const plugin = config.plugins.find((p) => p.name === pluginName);
+
+    if (!plugin) {
+      throw new TwilioCliError(`The plugin ${pluginName} was not found.`);
+    }
+
+    const pkgDir = `${plugin.dir}/package.json`;
+    const pkg = readJSONFile(pkgDir);
+    const scriptVersion = pkg.dependencies['flex-plugin-scripts'];
+
+    if (!semver.satisfies(scriptVersion, '>=4.0.0')) {
+      throw new TwilioCliError(`The plugin ${pluginName}'s versioning is not compatable with this CLI command.`);
+    }
+
+    await this.runScript('check-start', ['--name', pluginName]);
   }
 
   /**
