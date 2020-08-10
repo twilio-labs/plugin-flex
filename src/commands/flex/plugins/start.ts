@@ -93,7 +93,7 @@ export default class FlexPluginsStart extends FlexPlugin {
     const pkg = readJSONFile(pkgDir);
     const scriptVersion = semver.coerce(pkg.dependencies['flex-plugin-scripts']);
 
-    if (!scriptVersion || !semver.satisfies(scriptVersion.version, '>=4.0.0')) {
+    if (scriptVersion === null || scriptVersion.major !== 4) {
       throw new TwilioCliError(`The plugin ${pluginName}'s versioning is not compatable with this CLI command.`);
     }
 
