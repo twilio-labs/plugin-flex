@@ -3,11 +3,12 @@ import * as pluginBuilderStartScript from 'flex-plugin-scripts/dist/scripts/star
 import { expect, createTest } from '../../../framework';
 import FlexPluginsStart from '../../../../commands/flex/plugins/start';
 import { TwilioCliError } from '../../../../exceptions';
+import * as fs from '../../../../utils/fs';
 
 describe('Commands/FlexPluginsStart', () => {
   const { sinon, start } = createTest(FlexPluginsStart);
   const pkg = {
-    name: 'pluginOne',
+    name: 'plugin-testOne',
     dependencies: {
       'flex-plugin-scripts': '4.0.0',
     },
@@ -20,11 +21,14 @@ describe('Commands/FlexPluginsStart', () => {
   };
   const badPluginsPkg = {
     name: 'fakePlugin',
+    dependencies: {
+      'flex-plugin-scripts': '4.0.0',
+    },
   };
   const config = {
     plugins: [
-      { name: 'pluginOne', dir: 'test-dir', port: 0 },
-      { name: 'pluginTwo', dir: 'test-dir', port: 0 },
+      { name: 'plugin-testOne', dir: 'test-dir', port: 0 },
+      { name: 'plugin-testTwo', dir: 'test-dir', port: 0 },
       { name: 'pluginBad', dir: 'test-dir', port: 0 },
     ],
   };
@@ -44,11 +48,13 @@ describe('Commands/FlexPluginsStart', () => {
       sinon.stub(instance, 'isPluginFolder').returns(true);
       sinon.stub(instance, 'pkg').get(() => pkg);
       sinon.stub(instance, 'pluginsConfig').get(() => config);
+      sinon.stub(fs, 'readJSONFile').returns(pkg);
       findPortAvailablePort.returns(Promise.resolve(100));
     })
     .test(async (instance) => {
       await instance.doRun();
 
+      expect(instance.pluginsConfig).to.equal(config);
       expect(instance.runScript).to.have.been.calledTwice;
       expect(instance.runScript).to.have.been.calledWith('start', ['flex', '--name', pkg.name]);
       expect(instance.runScript).to.have.been.calledWith('check-start', ['--name', pkg.name]);
@@ -63,6 +69,7 @@ describe('Commands/FlexPluginsStart', () => {
       sinon.stub(instance, 'isPluginFolder').returns(true);
       sinon.stub(instance, 'pkg').get(() => badVersionPkg);
       sinon.stub(instance, 'pluginsConfig').get(() => config);
+      sinon.stub(fs, 'readJSONFile').returns(badVersionPkg);
       findPortAvailablePort.returns(Promise.resolve(100));
     })
     .test(async (instance) => {
@@ -108,6 +115,7 @@ describe('Commands/FlexPluginsStart', () => {
       sinon.stub(instance, 'spawnScript').returnsThis();
       sinon.stub(instance, 'isPluginFolder').returns(false);
       sinon.stub(instance, 'pluginsConfig').get(() => config);
+      sinon.stub(fs, 'readJSONFile').returns(pkg);
       findPortAvailablePort.returns(Promise.resolve(100));
     })
     .test(async (instance) => {
@@ -126,6 +134,7 @@ describe('Commands/FlexPluginsStart', () => {
       sinon.stub(instance, 'spawnScript').returnsThis();
       sinon.stub(instance, 'isPluginFolder').returns(false);
       sinon.stub(instance, 'pluginsConfig').get(() => config);
+      sinon.stub(fs, 'readJSONFile').returns(pkg);
       findPortAvailablePort.returns(Promise.resolve(100));
     })
     .test(async (instance) => {
