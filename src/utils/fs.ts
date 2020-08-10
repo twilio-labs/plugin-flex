@@ -24,8 +24,8 @@ export const readJsonFile = <T>(...paths: string[]): T => JSON.parse(readFileSyn
 
 /**
  * Write to a JSON file
- * @param obj 
- * @param paths 
+ * @param obj
+ * @param paths
  */
-export const writeJSONFile = (obj: object, ...paths: string[]) =>
+export const writeJSONFile = (obj: Record<string, unknown>, ...paths: string[]) =>
   writeFileSync(path.join(...paths), JSON.stringify(obj, null, 2));

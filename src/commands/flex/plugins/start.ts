@@ -66,7 +66,7 @@ export default class FlexPluginsStart extends FlexPlugin {
     if (flexArgs.length && pluginNames.length) {
       // Verify all plugins are correct
       for (let i = 0; pluginNames && i < pluginNames.length; i++) {
-        await this.runScript('check-start', ['--name', pluginNames[i]]);
+        await this.checkPlugin(pluginNames[i]);
       }
 
       // Start flex start once
@@ -83,8 +83,7 @@ export default class FlexPluginsStart extends FlexPlugin {
 
   async checkPlugin(pluginName: string) {
     // read cli plugins json to get directory
-    const config = this.pluginsConfig;
-    const plugin = config.plugins.find((p) => p.name === pluginName);
+    const plugin = this.pluginsConfig.plugins.find((p) => p.name === pluginName);
 
     if (!plugin) {
       throw new TwilioCliError(`The plugin ${pluginName} was not found.`);
@@ -92,9 +91,9 @@ export default class FlexPluginsStart extends FlexPlugin {
 
     const pkgDir = `${plugin.dir}/package.json`;
     const pkg = readJSONFile(pkgDir);
-    const scriptVersion = pkg.dependencies['flex-plugin-scripts'];
+    const scriptVersion = semver.coerce(pkg.dependencies['flex-plugin-scripts']);
 
-    if (!semver.satisfies(scriptVersion, '>=4.0.0')) {
+    if (!scriptVersion || !semver.satisfies(scriptVersion.version, '>=4.0.0')) {
       throw new TwilioCliError(`The plugin ${pluginName}'s versioning is not compatable with this CLI command.`);
     }
 

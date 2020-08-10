@@ -393,8 +393,8 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
    * Get the cli plugin configuartion
    */
   get pluginsConfig() {
-    mkdirp(join(this.cliRootDir, 'flex'));
-    if (!filesExist(this.cliRootDir, 'flex', 'plugins.json')) {
+    mkdirp.sync(join(this.cliRootDir, 'flex'));
+    if (!filesExist(join(this.cliRootDir, 'flex', 'plugins.json'))) {
       writeJSONFile({ plugins: [] }, this.cliRootDir, 'flex', 'plugins.json');
     }
     return readJsonFile<CLIFlexConfiguration>(this.cliRootDir, 'flex', 'plugins.json');
