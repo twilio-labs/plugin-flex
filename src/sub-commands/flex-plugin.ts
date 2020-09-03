@@ -22,6 +22,7 @@ import { filesExist, readJSONFile, readJsonFile, writeJSONFile } from '../utils/
 import { TwilioCliError } from '../exceptions';
 import { instanceOf } from '../utils/general';
 import { toSentenceCase } from '../utils/strings';
+import prints from '../prints';
 import { flexPlugin as flexPluginDocs } from '../commandDocs.json';
 
 interface FlexPluginOption {
@@ -44,6 +45,14 @@ export interface FlexConfigurationPlugin {
 
 export interface CLIFlexConfiguration {
   plugins: FlexConfigurationPlugin[];
+}
+
+interface Pkg {
+  name: string;
+  version: string;
+  dependencies: Record<string, string>;
+  devDependencies: Record<string, string>;
+  scripts: Record<string, string>;
 }
 
 /**
@@ -183,7 +192,7 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
    * @returns {object}
    */
   get pkg() {
-    return readJSONFile(this.cwd, 'package.json');
+    return readJSONFile<Pkg>(this.cwd, 'package.json');
   }
 
   /**
@@ -432,5 +441,12 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
       writeJSONFile({ plugins: [] }, this.cliRootDir, 'flex', 'plugins.json');
     }
     return readJsonFile<CLIFlexConfiguration>(this.cliRootDir, 'flex', 'plugins.json');
+  }
+
+  /**
+   * Configures the success/error print messages
+   */
+  get _prints() {
+    return prints(this._logger);
   }
 }
