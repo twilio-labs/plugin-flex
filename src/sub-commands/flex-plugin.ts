@@ -87,6 +87,8 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
 
   protected readonly skipEnvironmentalSetup: boolean;
 
+  protected readonly version: string;
+
   protected readonly _logger: Logger;
 
   protected scriptArgs: string[];
@@ -112,6 +114,8 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
     this.scriptArgs = process.argv.slice(3);
     this.skipEnvironmentalSetup = false;
     this._logger = new Logger({ isQuiet: false, markdown: true });
+    // eslint-disable-next-line global-require, @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+    this.version = require(join(this.pluginRootDir, 'package.json')).version;
 
     if (!this.opts.strict) {
       // @ts-ignore

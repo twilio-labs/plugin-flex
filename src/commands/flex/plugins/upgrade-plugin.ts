@@ -8,7 +8,15 @@ import FlexPlugin, { ConfigData, SecureStorage } from '../../../sub-commands/fle
 import { createDescription } from '../../../utils/general';
 import { upgradePlugin as upgradePluginDoc } from '../../../commandDocs.json';
 import { TwilioCliError } from '../../../exceptions';
-import { calculateSha256, filesExist, removeFile, writeJSONFile } from '../../../utils/fs';
+import {
+  calculateSha256,
+  copyFile,
+  fileExists,
+  readFile,
+  removeFile,
+  writeFile,
+  writeJSONFile,
+} from '../../../utils/fs';
 
 interface ScriptsToRemove {
   name: string;
@@ -61,7 +69,7 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
   async upgradeFromV3() {
     this.prints.scriptStarted();
 
-    await this.removeCraco();
+    await this.cleanupScaffold();
     await this.updatePackageJson(
       ['craco-config-flex-plugin', 'react-scripts'],
       ['flex-plugin'],
@@ -80,18 +88,62 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
     ]);
     await this.npmInstall();
 
-    this.prints.scriptSucceeded();
+    this.prints.scriptSucceeded(!this._flags.install);
   }
 
-  async removeCraco() {
-    await progress('Removing {{craco.config.js}}', async () => {
-      if (filesExist(this.cwd, 'craco.config.js')) {
+  /**
+   * Removes craco.config.js file
+   */
+  async cleanupScaffold() {
+    await progress('Cleaning up the scaffold', async () => {
+      let warningLogged = false;
+
+      if (fileExists(this.cwd, 'craco.config.js')) {
         const sha = await calculateSha256(this.cwd, 'craco.config.js');
         if (sha === FlexPluginsUpgradePlugin.cracoConfigSha) {
           removeFile(this.cwd, 'craco.config.js');
         } else {
-          this.prints.cannotRemoveCraco();
+          this.prints.cannotRemoveCraco(!warningLogged);
+          warningLogged = true;
         }
+      }
+
+      const publicFiles = ['index.html', 'pluginsService.js', 'plugins.json', 'plugins.local.build.json'];
+      publicFiles.forEach((file) => {
+        if (fileExists(this.cwd, 'public', file)) {
+          removeFile(this.cwd, 'public', file);
+        }
+      });
+
+      copyFile(
+        [require.resolve('create-flex-plugin'), '..', '..', 'templates', 'core', 'public', 'appConfig.example.js'],
+        [this.cwd, 'public', 'appConfig.example.js'],
+      );
+
+      if (fileExists(this.cwd, 'public', 'appConfig.js')) {
+        const newLines: string[] = [];
+        const ignoreLines = [
+          '// set to /plugins.json for local dev',
+          '// set to /plugins.local.build.json for testing your build',
+          '// set to "" for the default live plugin loader',
+        ];
+        readFile(this.cwd, 'public', 'appConfig.js')
+          .split('\n')
+          .forEach((line) => {
+            if (ignoreLines.includes(line) || line.startsWith('var pluginServiceUrl')) {
+              return;
+            }
+
+            newLines.push(line);
+          });
+        const index = newLines.findIndex((line) => line.indexOf('url: pluginServiceUrl') !== -1);
+        if (index === -1) {
+          this.prints.updatePluginUrl(!warningLogged);
+        } else {
+          newLines[index] = newLines[index].replace('url: pluginServiceUrl', "url: '/plugins'");
+        }
+
+        writeFile(newLines.join('\n'), this.cwd, 'public', 'appConfig.js');
       }
     });
   }
@@ -113,7 +165,7 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
             FlexPluginsUpgradePlugin.pluginBuilderScripts.includes(dep) && this._flags.beta ? { version: 'next' } : {};
           const scriptPkg = await packageJson(dep, option);
           if (!scriptPkg) {
-            // throw error
+            this.prints.packageNotFound(dep);
             this.exit(1);
             return;
           }
@@ -162,7 +214,13 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
     }
 
     await progress('Installing dependencies', async () => {
-      const { exitCode, stderr } = await spawn('npm', ['install', '--no-progress', '--silent']);
+      const { exitCode, stderr } = await spawn('npm', [
+        'install',
+        '--no-fund',
+        '--no-audit',
+        '--no-progress',
+        '--silent',
+      ]);
       if (exitCode || stderr) {
         this._logger.error(stderr);
         this.exit(1);
@@ -174,7 +232,10 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
    * Returns the flex-plugin-scripts version from the plugin
    */
   get pkgVersion() {
-    const pluginScript = this.pkg.dependencies['flex-plugin-scripts'];
+    let pluginScript = this.pkg.dependencies['flex-plugin-scripts'];
+    if (!pluginScript) {
+      pluginScript = this.pkg.devDependencies['flex-plugin-scripts'];
+    }
     if (!pluginScript) {
       throw new TwilioCliError("Package 'flex-plugin-scripts' was not found");
     }
