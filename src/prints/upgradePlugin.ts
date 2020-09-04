@@ -1,6 +1,19 @@
-import { Logger, singleLineString } from 'flex-plugins-utils-logger';
+import { Logger, singleLineString, boxen, confirm } from 'flex-plugins-utils-logger';
+
+import { exit } from '../utils/general';
 
 const cracoUpgradeGuideLink = 'https://twilio.com';
+
+/**
+ * Upgrade notification
+ */
+const upgradeNotification = (logger: Logger) => async () => {
+  boxen.warning('You are about to upgrade your plugin to use the latest version of Flex Plugin CLI.');
+  const answer = await confirm('Please backup your plugin either locally or on GitHub. Do you want to continue?');
+  if (!answer) {
+    exit();
+  }
+};
 
 /**
  * Script started
@@ -83,6 +96,7 @@ const warnNotRemoved = (logger: Logger) => (note: string) => {
 };
 
 export default (logger: Logger) => ({
+  upgradeNotification: upgradeNotification(logger),
   scriptStarted: scriptStarted(logger),
   scriptSucceeded: scriptSucceeded(logger),
   updatePluginUrl: updatePluginUrl(logger),

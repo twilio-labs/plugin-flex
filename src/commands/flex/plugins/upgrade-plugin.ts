@@ -57,6 +57,8 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
    * @override
    */
   async doRun() {
+    await this.prints.upgradeNotification();
+
     if (this.pkgVersion === 3) {
       await this.upgradeFromV3();
       return;
@@ -132,7 +134,7 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
         ];
         readFile(this.cwd, 'public', 'appConfig.js')
           .split('\n')
-          .forEach((line) => {
+          .forEach((line: string) => {
             if (ignoreLines.includes(line) || line.startsWith('var pluginServiceUrl')) {
               return;
             }

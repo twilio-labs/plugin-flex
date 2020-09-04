@@ -20,7 +20,7 @@ import mkdirp from 'mkdirp';
 
 import { filesExist, readJSONFile, readJsonFile, writeJSONFile } from '../utils/fs';
 import { TwilioCliError } from '../exceptions';
-import { instanceOf } from '../utils/general';
+import { exit, instanceOf } from '../utils/general';
 import { toSentenceCase } from '../utils/strings';
 import prints from '../prints';
 import { flexPlugin as flexPluginDocs } from '../commandDocs.json';
@@ -122,11 +122,7 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
       this.constructor.strict = false;
     }
 
-    this.exit = process.exit;
-    // @ts-ignore
-    process.exit = (exitCode) => {
-      this.exit(exitCode);
-    };
+    this.exit = exit;
   }
 
   /**
