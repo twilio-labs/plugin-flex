@@ -66,6 +66,9 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
     this.exit(1);
   }
 
+  /**
+   * Upgrade from v3 to v4
+   */
   async upgradeFromV3() {
     this.prints.scriptStarted();
 
