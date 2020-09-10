@@ -25,7 +25,7 @@ interface ScriptsToRemove {
   post?: string;
 }
 
-interface AddDependency {
+interface DependencyUpdates {
   remove: string[];
   deps: Record<string, string>;
   devDeps: Record<string, string>;
@@ -90,7 +90,7 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
   async upgradeFromV1() {
     this.prints.scriptStarted('v1');
 
-    const depsToAdd: AddDependency = {
+    const depsToAdd: DependencyUpdates = {
       remove: ['react-app-rewire-flex-plugin', 'react-app-rewired', 'react-scripts'],
       deps: {
         'flex-plugin': '*',
@@ -130,7 +130,7 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
   async upgradeFromV2() {
     this.prints.scriptStarted('v2');
 
-    const depsToAdd: AddDependency = {
+    const depsToAdd: DependencyUpdates = {
       remove: ['@craco/craco', 'craco-config-flex-plugin', 'core-j', 'react-test-renderer', 'react-scripts'],
       deps: {
         'flex-plugin': '*',
@@ -171,7 +171,7 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
   async upgradeFromV3() {
     this.prints.scriptStarted('v3');
 
-    const depsToAdd: AddDependency = {
+    const depsToAdd: DependencyUpdates = {
       remove: ['craco-config-flex-plugin', 'react-scripts', 'rimraf', 'flex-plugin-scripts'],
       deps: {
         'flex-plugin': '*',
@@ -263,7 +263,7 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
    * @param dependencies  the list of dependencies to modify - can also be used to update to the latest
    * @param custom        a custom callback for modifying package.json
    */
-  async updatePackageJson(dependencies: AddDependency, custom?: PkgCallback) {
+  async updatePackageJson(dependencies: DependencyUpdates, custom?: PkgCallback) {
     await progress('Updating package dependencies', async () => {
       const { pkg } = this;
       dependencies.remove.forEach((name) => delete pkg.dependencies[name]);
@@ -354,16 +354,11 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
    * Returns the flex-plugin-scripts version from the plugin
    */
   get pkgVersion() {
-    let pkg = this.pkg.dependencies['flex-plugin-scripts'];
-    if (!pkg) {
-      pkg = this.pkg.devDependencies['flex-plugin-scripts'];
-    }
-    if (!pkg) {
-      pkg = this.pkg.dependencies['flex-plugin'];
-    }
-    if (!pkg) {
-      pkg = this.pkg.devDependencies['flex-plugin'];
-    }
+    const pkg =
+      this.pkg.dependencies['flex-plugin-scripts'] ||
+      this.pkg.devDependencies['flex-plugin-scripts'] ||
+      this.pkg.dependencies['flex-plugin'] ||
+      this.pkg.devDependencies['flex-plugin'];
     if (!pkg) {
       throw new TwilioCliError("Package 'flex-plugin-scripts' was not found");
     }
