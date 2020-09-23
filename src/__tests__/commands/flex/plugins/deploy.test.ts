@@ -194,27 +194,6 @@ describe('Commands/FlexPluginsDeploy', () => {
     })
     .it('should validate plugin as a minor bump');
 
-  start(['--version', 'not-a-semver'])
-    .setup((instance) => {
-      sinon.stub(instance.pluginsClient, 'get').resolves(pluginResource);
-      sinon.stub(instance.pluginVersionsClient, 'latest').resolves(pluginVersionResource);
-    })
-    .test(async (instance, _, done) => {
-      try {
-        await instance.validatePlugin();
-      } catch (e) {
-        expect(e).to.be.instanceOf(TwilioCliError);
-        expect(e.message).to.contain('valid semver');
-        expect(instance.pluginsClient.get).to.have.been.calledOnce;
-        expect(instance.pluginsClient.get).to.have.been.calledWith(pkg.name);
-        expect(instance.pluginVersionsClient.latest).to.have.been.calledOnce;
-        expect(instance.pluginVersionsClient.latest).to.have.been.calledWith(pkg.name);
-
-        done();
-      }
-    })
-    .it('should invalidate plugin because version is not semver');
-
   start(['--version', '0.0.1'])
     .setup((instance) => {
       sinon.stub(instance.pluginsClient, 'get').resolves(pluginResource);
