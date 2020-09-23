@@ -18,6 +18,7 @@ import { flags } from '@oclif/command';
 import * as Errors from '@oclif/errors';
 import mkdirp from 'mkdirp';
 import { PluginServiceHttpOption } from 'flex-plugins-api-client/dist/clients/client';
+import * as Parser from '@oclif/parser';
 
 import { filesExist, readJSONFile, readJsonFile, writeJSONFile } from '../utils/fs';
 import { TwilioCliError } from '../exceptions';
@@ -330,7 +331,7 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
   }
 
   /**
-   * Cathes any thrown exception
+   * Catches any thrown exception
    * @param error
    */
   async catch(error: Error) {
