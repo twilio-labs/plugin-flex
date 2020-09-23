@@ -1,7 +1,8 @@
 import { Logger, singleLineString } from 'flex-plugins-utils-logger';
 import { DeployResult } from 'flex-plugin-scripts/dist/scripts/deploy';
+import dayjs from 'dayjs';
 
-import CreateConfiguration from '../sub-commands/create-configuration';
+import { createConfiguration as createConfigurationDocs } from '../commandDocs.json';
 
 /**
  * Prints the successful message of a plugin deployment
@@ -11,6 +12,8 @@ export const deploySuccessful = (logger: Logger) => (
   availability: string,
   deployedData: DeployResult,
 ) => {
+  const defaultName = dayjs().format('MMM D, YYYY');
+
   logger.newline();
   logger.success(
     `🚀 Plugin (${availability}) **${name}**@**${deployedData.nextVersion}** was successfully deployed using Plugins API`,
@@ -23,8 +26,8 @@ export const deploySuccessful = (logger: Logger) => (
     singleLineString(
       'Run {{$ twilio flex:plugins:release',
       `\\-\\-plugin ${name}@${deployedData.nextVersion}`,
-      `\\-\\-name "${CreateConfiguration.flags.name.default}"`,
-      `\\-\\-description "${CreateConfiguration.flags.description.default}}}`,
+      `\\-\\-name "${defaultName}"`,
+      `\\-\\-description "${createConfigurationDocs.defaults.description}"}}`,
       'to enable this plugin on your flex instance',
     ),
   );

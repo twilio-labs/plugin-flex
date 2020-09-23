@@ -6,11 +6,6 @@ import { ConfigData, SecureStorage } from '../../../sub-commands/flex-plugin';
 import CreateConfiguration from '../../../sub-commands/create-configuration';
 import { createConfiguration as createConfigurationDocs, release as releaseDocs } from '../../../commandDocs.json';
 
-/*
- * --description is required if you are creating a configuration and release in one step
- * however, if the configuration-sid is provided, this is no longer required and in fact should throw an error
- */
-
 /**
  * Creates a Flex Plugin Configuration and releases and sets it to active
  */
@@ -30,10 +25,13 @@ export default class FlexPluginsRelease extends CreateConfiguration {
     }),
   };
 
+  private prints;
+
   constructor(argv: string[], config: ConfigData, secureStorage: SecureStorage) {
     super(argv, config, secureStorage, { strict: false, runInDirectory: false });
 
     this.scriptArgs = [];
+    this.prints = this._prints.release;
   }
 
   /**
@@ -55,9 +53,7 @@ export default class FlexPluginsRelease extends CreateConfiguration {
       false,
     );
 
-    this._logger.newline();
-    this._logger.success(`🚀 Configuration **${configurationSid}** was successfully enabled`);
-    this._logger.newline();
+    this.prints.releaseSuccessful(configurationSid);
   }
 
   /**

@@ -34,7 +34,7 @@ export default abstract class CreateConfiguration extends FlexPlugin {
     }),
     description: flags.string({
       description: createConfigurationDocs.flags.description,
-      default: createConfigurationDocs.default.description,
+      default: createConfigurationDocs.defaults.description,
       required: true,
     }),
   };
