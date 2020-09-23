@@ -6,6 +6,11 @@ import { ConfigData, SecureStorage } from '../../../sub-commands/flex-plugin';
 import CreateConfiguration from '../../../sub-commands/create-configuration';
 import { createConfiguration as createConfigurationDocs, release as releaseDocs } from '../../../commandDocs.json';
 
+/*
+ * --description is required if you are creating a configuration and release in one step
+ * however, if the configuration-sid is provided, this is no longer required and in fact should throw an error
+ */
+
 /**
  * Creates a Flex Plugin Configuration and releases and sets it to active
  */
@@ -45,7 +50,7 @@ export default class FlexPluginsRelease extends CreateConfiguration {
 
   async doCreateRelease(configurationSid: string) {
     await progress(
-      `Enabling configuration **v${configurationSid}**`,
+      `Enabling configuration **${configurationSid}**`,
       async () => this.createRelease(configurationSid),
       false,
     );
