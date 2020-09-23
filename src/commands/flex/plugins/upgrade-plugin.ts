@@ -71,14 +71,17 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
 
     if (this.pkgVersion === 1) {
       await this.upgradeFromV1();
+      return;
     }
 
     if (this.pkgVersion === 2) {
       await this.upgradeFromV2();
+      return;
     }
 
     if (this.pkgVersion === 3) {
       await this.upgradeFromV3();
+      return;
     }
 
     await this.upgradeToLatest();
