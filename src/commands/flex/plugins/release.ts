@@ -86,6 +86,7 @@ export default class FlexPluginsRelease extends CreateConfiguration {
         throw new RequiredFlagError({
           flag: FlexPluginsRelease.flags[key],
           parse: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             input: {} as any,
             output: parse,
           },
