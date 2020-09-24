@@ -81,10 +81,10 @@ describe('Commands/FlexPluginsStart', () => {
         await instance.run();
       } catch (e) {
         expect(e).to.be.instanceOf(TwilioCliError);
-        expect(e.message).to.contain('versioning is not compatable');
+        expect(e.message).to.contain('versioning is not compatible');
         expect(instance._flags.name).to.be.undefined;
         expect(instance._flags['include-remote']).to.be.undefined;
-        expect(instance.runScript).not.to.have.been.called;
+        expect(instance.runScript).have.been.calledOnce;
         expect(instance.spawnScript).not.to.have.been.called;
       }
     })
