@@ -21,7 +21,7 @@ import { PluginServiceHttpOption } from 'flex-plugins-api-client/dist/clients/cl
 
 import { filesExist, readJSONFile, readJsonFile, writeJSONFile } from '../utils/fs';
 import { TwilioCliError } from '../exceptions';
-import { exit, instanceOf } from '../utils/general';
+import { cloneDeep, exit, instanceOf } from '../utils/general';
 import { toSentenceCase } from '../utils/strings';
 import prints from '../prints';
 import { flexPlugin as flexPluginDocs } from '../commandDocs.json';
@@ -60,12 +60,16 @@ interface Pkg {
 
 export type PkgCallback = (input: Pkg) => Pkg;
 
+const baseFlag = { ...baseCommands.TwilioClientCommand.flags };
+delete baseFlag['cli-output-format'];
+
 /**
  * Base class for all flex-plugin * scripts.
  * This will ensure the script is running on a Flex-plugin project, otherwise will throw an error
  */
 export default class FlexPlugin extends baseCommands.TwilioClientCommand {
   static flags = {
+    ...baseFlag,
     json: flags.boolean({
       description: flexPluginDocs.flags.json,
     }),

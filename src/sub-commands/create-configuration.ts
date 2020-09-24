@@ -39,7 +39,7 @@ export const descriptionFlag = {
  * Creates a Configuration
  */
 export default abstract class CreateConfiguration extends FlexPlugin {
-  public static flags = {
+  static flags = {
     ...FlexPlugin.flags,
     new: flags.boolean({
       description: createConfigurationDocs.flags.new,

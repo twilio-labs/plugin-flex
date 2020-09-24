@@ -44,6 +44,10 @@ export default class FlexPluginsDiff extends FlexPlugin {
     },
   ];
 
+  static flags = {
+    ...FlexPlugin.flags,
+  };
+
   constructor(argv: string[], config: ConfigData, secureStorage: SecureStorage) {
     super(argv, config, secureStorage, { runInDirectory: false });
   }

@@ -8,6 +8,10 @@ import { test as testDocs } from '../../../commandDocs.json';
 export default class FlexPluginsTest extends FlexPlugin {
   static description = createDescription(testDocs.description, true);
 
+  static flags = {
+    ...FlexPlugin.flags,
+  };
+
   /**
    * @override
    */

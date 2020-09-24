@@ -50,3 +50,5 @@ export const exit = (exitCode = 1) => {
   // eslint-disable-next-line no-process-exit
   process.exit(exitCode);
 };
+
+export const cloneDeep = (obj: any) => JSON.parse(JSON.stringify(obj));
