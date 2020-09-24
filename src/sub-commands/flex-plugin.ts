@@ -21,7 +21,7 @@ import { PluginServiceHttpOption } from 'flex-plugins-api-client/dist/clients/cl
 
 import { filesExist, readJSONFile, readJsonFile, writeJSONFile } from '../utils/fs';
 import { TwilioCliError } from '../exceptions';
-import { cloneDeep, exit, instanceOf } from '../utils/general';
+import { exit, instanceOf } from '../utils/general';
 import { toSentenceCase } from '../utils/strings';
 import prints from '../prints';
 import { flexPlugin as flexPluginDocs } from '../commandDocs.json';

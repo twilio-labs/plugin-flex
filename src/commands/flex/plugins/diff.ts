@@ -22,6 +22,10 @@ export const parser = (input: string) => {
   return input;
 };
 
+const baseFlags = { ...FlexPlugin.flags };
+// @ts-ignore
+delete baseFlags.json;
+
 /**
  * Finds the difference between two Flex Plugin Configuration
  */
@@ -45,7 +49,7 @@ export default class FlexPluginsDiff extends FlexPlugin {
   ];
 
   static flags = {
-    ...FlexPlugin.flags,
+    ...baseFlags,
   };
 
   constructor(argv: string[], config: ConfigData, secureStorage: SecureStorage) {

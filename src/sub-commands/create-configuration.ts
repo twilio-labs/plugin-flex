@@ -35,12 +35,16 @@ export const descriptionFlag = {
   required: true,
 };
 
+const baseFlags = { ...FlexPlugin.flags };
+// @ts-ignore
+delete baseFlags.json;
+
 /**
  * Creates a Configuration
  */
 export default abstract class CreateConfiguration extends FlexPlugin {
   static flags = {
-    ...FlexPlugin.flags,
+    ...baseFlags,
     new: flags.boolean({
       description: createConfigurationDocs.flags.new,
     }),
