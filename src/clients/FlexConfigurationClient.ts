@@ -1,5 +1,8 @@
 import { ConfigurationContext, ConfigurationInstance } from 'twilio/lib/rest/flexApi/v1/configuration';
 
+/**
+ * Wrapper Twilio Flex Configuration Public API
+ */
 export default class FlexConfigurationClient {
   private client;
 
@@ -24,13 +27,5 @@ export default class FlexConfigurationClient {
     }
 
     return config.serverlessServiceSids[0];
-    /*
-     * const config = await this.fetch();
-     * if (!config.serverlessServiceSids) {
-     *   return null;
-     * }
-     *
-     * return config.serverlessServiceSids[0];
-     */
   }
 }

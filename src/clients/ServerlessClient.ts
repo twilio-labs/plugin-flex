@@ -13,6 +13,9 @@ interface BuildEnvironment {
   environment?: EnvironmentInstance;
 }
 
+/**
+ * Wrapper Twilio Serverless Public API
+ */
 export default class ServerlessClient {
   static timeoutMsec = 30000;
 

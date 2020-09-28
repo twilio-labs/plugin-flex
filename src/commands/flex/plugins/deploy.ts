@@ -178,6 +178,9 @@ export default class FlexPluginsDeploy extends FlexPlugin {
     });
   }
 
+  /**
+   * Checks to see if a legacy plugin exist
+   */
   async checkForLegacy() {
     const serviceSid = await this.flexConfigurationClient.getServerlessSid();
     if (serviceSid) {

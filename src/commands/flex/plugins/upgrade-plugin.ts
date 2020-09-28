@@ -45,7 +45,7 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
   static flags = {
     ...baseFlags,
     'remove-legacy-plugin': flags.boolean({
-      description: upgradePluginDoc.flags.cleanup,
+      description: upgradePluginDoc.flags.removeLegacyPlugin,
     }),
     install: flags.boolean({
       description: upgradePluginDoc.flags.install,
@@ -77,6 +77,7 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
   async doRun() {
     if (this._flags['remove-legacy-plugin']) {
       await this.removeLegacyPlugin();
+      this.prints.removeLegacyPluginSucceeded(this.pkg.name);
       return;
     }
 
@@ -98,8 +99,6 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
     }
 
     await this.upgradeToLatest();
-
-    this.exit(0);
   }
 
   /**
@@ -410,13 +409,13 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
 
     const serviceSid = await this.flexConfigurationClient.getServerlessSid();
     if (!serviceSid) {
-      this.prints.noLegacyPluginFound(this.pkg.name);
       return;
     }
 
     const hasLegacy = await this.serverlessClient.hasLegacy(serviceSid, name);
     if (!hasLegacy) {
-      this.prints.noLegacyPluginFound(this.pkg.name);
+      this.prints.noLegacyPluginFound(name);
+      this.exit(0);
       return;
     }
 
@@ -425,7 +424,6 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
       async () => this.serverlessClient.removeLegacy(serviceSid, name),
       false,
     );
-    this.prints.noLegacyPluginFound(this.pkg.name);
   }
 
   /**
