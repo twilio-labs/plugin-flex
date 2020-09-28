@@ -3,9 +3,10 @@ import packageJson from 'package-json';
 import { progress } from 'flex-plugins-utils-logger';
 import { flags } from '@oclif/parser';
 import spawn from 'flex-plugins-utils-spawn';
+import { TwilioApiError } from 'flex-plugins-utils-exception';
 
 import FlexPlugin, { ConfigData, PkgCallback, SecureStorage } from '../../../sub-commands/flex-plugin';
-import { createDescription } from '../../../utils/general';
+import { createDescription, instanceOf } from '../../../utils/general';
 import { upgradePlugin as upgradePluginDoc } from '../../../commandDocs.json';
 import { TwilioCliError } from '../../../exceptions';
 import {
@@ -43,6 +44,9 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
 
   static flags = {
     ...baseFlags,
+    'remove-legacy-plugin': flags.boolean({
+      description: upgradePluginDoc.flags.cleanup,
+    }),
     install: flags.boolean({
       description: upgradePluginDoc.flags.install,
     }),
@@ -71,6 +75,11 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
    * @override
    */
   async doRun() {
+    if (this._flags['remove-legacy-plugin']) {
+      await this.removeLegacyPlugin();
+      return;
+    }
+
     await this.prints.upgradeNotification(this._flags.yes);
 
     if (this.pkgVersion === 1) {
@@ -378,6 +387,45 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
         this.exit(1);
       }
     });
+  }
+
+  /**
+   * Removes the legacy plugin
+   */
+  async removeLegacyPlugin() {
+    const { name } = this.pkg;
+    await this.prints.removeLegacyNotification(name, this._flags.yes);
+
+    // Check plugin is already registered with plugins API
+    try {
+      await this.pluginsClient.get(name);
+    } catch (e) {
+      if (instanceOf(e, TwilioApiError) && e.status === 404) {
+        this.prints.warningPluginNotInAPI(name);
+        this.exit(1);
+        return;
+      }
+      throw e;
+    }
+
+    const serviceSid = await this.flexConfigurationClient.getServerlessSid();
+    if (!serviceSid) {
+      this.prints.noLegacyPluginFound(this.pkg.name);
+      return;
+    }
+
+    const hasLegacy = await this.serverlessClient.hasLegacy(serviceSid, name);
+    if (!hasLegacy) {
+      this.prints.noLegacyPluginFound(this.pkg.name);
+      return;
+    }
+
+    await progress(
+      'Deleting your legacy plugin',
+      async () => this.serverlessClient.removeLegacy(serviceSid, name),
+      false,
+    );
+    this.prints.noLegacyPluginFound(this.pkg.name);
   }
 
   /**

@@ -1,4 +1,4 @@
-import { Logger, singleLineString } from 'flex-plugins-utils-logger';
+import { Logger, singleLineString, boxen, coloredStrings } from 'flex-plugins-utils-logger';
 import { DeployResult } from 'flex-plugin-scripts/dist/scripts/deploy';
 import dayjs from 'dayjs';
 
@@ -34,6 +34,16 @@ export const deploySuccessful = (logger: Logger) => (
   logger.newline();
 };
 
+/**
+ * Warns about having legacy plugins
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const warnHasLegacy = (logger: Logger) => () => {
+  const cmd = coloredStrings.code('$ twilio flex:plugins:upgrade-plugin --remove-legacy-plugin');
+  boxen.warning(`You have a legacy bundle of this plugin. Remove it by running ${cmd}`);
+};
+
 export default (logger: Logger) => ({
   deploySuccessful: deploySuccessful(logger),
+  warnHasLegacy: warnHasLegacy(logger),
 });
