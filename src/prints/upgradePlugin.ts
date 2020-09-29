@@ -112,7 +112,7 @@ const warnNotRemoved = (logger: Logger) => (note: string) => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const removeLegacyNotification = (logger: Logger) => async (pluginName: string, skip: boolean) => {
   const name = coloredStrings.name(pluginName);
-  boxen.warning(`You are about to delete your legacy plugin bundle ${name} hosted on Twilio Assets.`);
+  boxen.warning(`You are about to delete your legacy plugin ${name} bundle hosted on Twilio Assets.`);
   if (!skip) {
     const answer = await confirm(
       'Please confirm that you have already migrated this plugin to use the Plugins API. Do you want to continue?',
@@ -146,7 +146,7 @@ const removeLegacyPluginSucceeded = (logger: Logger) => (pluginName: string) => 
 
   logger.newline();
   logger.success(
-    `🎉 Your legacy plugin ${name} bundle was successfully removed from Twilio Assets. Your migration to Plugins API is now complete.`,
+    `🎉 Your legacy plugin ${name} bundle was successfully removed from Twilio Assets. The migration of your plugin to Plugins API is now complete.`,
   );
   logger.newline();
 };
