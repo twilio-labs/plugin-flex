@@ -1,0 +1,1 @@
+{"version":3,"file":"IncompatibleVersionError.js","sourceRoot":"","sources":["../../src/exceptions/IncompatibleVersionError.ts"],"names":[],"mappings":";;;;;AAAA,sEAA8C;AAE9C,MAAqB,wBAAyB,SAAQ,wBAAc;IAClE,YAAY,IAAY,EAAE,OAAuB;QAC/C,KAAK,CAAC,cAAc,IAAI,cAAc,OAAO,4CAA4C,CAAC,CAAC;QAE3F,MAAM,CAAC,cAAc,CAAC,IAAI,EAAE,wBAAwB,CAAC,SAAS,CAAC,CAAC;IAClE,CAAC;CACF;AAND,2CAMC"}
