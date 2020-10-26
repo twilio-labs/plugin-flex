@@ -79,7 +79,7 @@ describe('FlexConfigurationClient', () => {
       updateServerlessSids.restore();
     });
 
-    it('should do nothing if sid is already present', async () => {
+    it('should register sid', async () => {
       fetch.returns(
         Promise.resolve({
           serverlessServiceSids: [],

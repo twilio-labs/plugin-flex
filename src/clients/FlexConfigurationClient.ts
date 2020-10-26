@@ -3,10 +3,11 @@ import { ConfigurationContext, ConfigurationInstance } from 'twilio/lib/rest/fle
 
 import { TwilioCliError } from '../exceptions';
 
-interface Auth {
+export interface FlexConfigurationClientOptions {
   accountSid: string;
   username: string;
   password: string;
+  realm?: 'dev' | 'stage';
 }
 
 /**
@@ -15,11 +16,11 @@ interface Auth {
 export default class FlexConfigurationClient {
   private client;
 
-  private auth: Auth;
+  private options: FlexConfigurationClientOptions;
 
-  constructor(client: ConfigurationContext, auth: Auth) {
+  constructor(client: ConfigurationContext, options: FlexConfigurationClientOptions) {
     this.client = client;
-    this.auth = auth;
+    this.options = options;
   }
 
   /**
@@ -82,12 +83,15 @@ export default class FlexConfigurationClient {
    * @private
    */
   private async updateServerlessSids(sids: string[]): Promise<void> {
-    const auth = Buffer.from(`${this.auth.username}:${this.auth.password}`, 'utf8').toString('base64');
+    const auth = Buffer.from(`${this.options.username}:${this.options.password}`, 'utf8').toString('base64');
     // eslint-disable-next-line camelcase
-    const data = { account_sid: this.auth.accountSid, serverless_service_sids: sids };
+    const data = { account_sid: this.options.accountSid, serverless_service_sids: sids };
+    const url = this.options.realm
+      ? `https://flex-api.${this.options.realm}.twilio.com/v1/Configuration`
+      : 'https://flex-api.twilio.com/v1/Configuration';
 
     const response = await phin({
-      url: 'https://flex-api.twilio.com/v1/Configuration',
+      url,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
