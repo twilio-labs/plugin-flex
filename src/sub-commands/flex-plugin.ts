@@ -364,6 +364,11 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
       options.realm = this._flags.region as any;
     }
 
+    const auth = {
+      accountSid: this.currentProfile.accountSid,
+      username: this.twilioApiClient.username,
+      password: this.twilioApiClient.password,
+    };
     const httpClient = new PluginServiceHTTPClient(
       this.twilioApiClient.username,
       this.twilioApiClient.password,
@@ -378,7 +383,7 @@ export default class FlexPlugin extends baseCommands.TwilioClientCommand {
     this._pluginVersionsClient = new PluginVersionsClient(httpClient);
     this._configurationsClient = new ConfigurationsClient(httpClient);
     this._releasesClient = new ReleasesClient(httpClient);
-    this._flexConfigurationClient = new FlexConfigurationClient(this.twilioClient.flexApi.v1.configuration.get());
+    this._flexConfigurationClient = new FlexConfigurationClient(this.twilioClient.flexApi.v1.configuration.get(), auth);
     this._serverlessClient = new ServerlessClient(this.twilioClient.serverless.v1.services);
 
     if (!this.skipEnvironmentalSetup) {

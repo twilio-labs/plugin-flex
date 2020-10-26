@@ -50,7 +50,7 @@
     "create-flex-plugin": "^4.2.6-beta.0",
     "dayjs": "^1.9.3",
     "fancy-test": "^1.4.9",
-    "flex-plugin-scripts": "^4.2.6-beta.0",
+    "flex-plugin-scripts": "/Users/ktalebian/Projects/github/twilio/flex-plugin-builder/packages/flex-plugin-scripts",
     "flex-plugins-api-client": "^0.20.1",
     "flex-plugins-api-toolkit": "^0.20.1",
     "flex-plugins-utils-exception": "^0.17.0",
@@ -59,6 +59,7 @@
     "lodash.startcase": "^4.4.0",
     "mkdirp": "^1.0.4",
     "package-json": "^6.5.0",
+    "phin": "^3.5.0",
     "semver": "^7.3.2",
     "yargs": "^15.4.1"
   },
