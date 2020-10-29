@@ -1,9 +1,12 @@
+import { join } from 'path';
+
 import semver from 'semver';
 import packageJson from 'package-json';
 import { progress } from 'flex-plugins-utils-logger';
 import { flags } from '@oclif/parser';
 import spawn from 'flex-plugins-utils-spawn';
 import { TwilioApiError } from 'flex-plugins-utils-exception';
+import rimraf from 'rimraf';
 
 import FlexPlugin, { ConfigData, PkgCallback, SecureStorage } from '../../../sub-commands/flex-plugin';
 import { createDescription, instanceOf } from '../../../utils/general';
@@ -52,6 +55,9 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
     }),
     beta: flags.boolean({
       description: upgradePluginDoc.flags.beta,
+    }),
+    yarn: flags.boolean({
+      description: upgradePluginDoc.flags.yarn,
     }),
     yes: flags.boolean({
       description: upgradePluginDoc.flags.yes,
@@ -107,22 +113,22 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
 
     await this.prints.upgradeNotification(this._flags.yes);
 
-    if (this.pkgVersion === 1) {
-      await this.upgradeFromV1();
-      return;
+    switch (this.pkgVersion) {
+      case 1:
+        await this.upgradeFromV1();
+        break;
+      case 2:
+        await this.upgradeFromV2();
+        break;
+      case 3:
+        await this.upgradeFromV3();
+        break;
+      default:
+        await this.upgradeToLatest();
+        break;
     }
 
-    if (this.pkgVersion === 2) {
-      await this.upgradeFromV2();
-      return;
-    }
-
-    if (this.pkgVersion === 3) {
-      await this.upgradeFromV3();
-      return;
-    }
-
-    await this.upgradeToLatest();
+    this.prints.scriptSucceeded(!this._flags.install);
   }
 
   /**
@@ -144,8 +150,6 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
       { name: 'test', it: 'react-app-rewired test --env=jsdom' },
     ]);
     await this.npmInstall();
-
-    this.prints.scriptSucceeded(!this._flags.install);
   }
 
   /**
@@ -168,8 +172,6 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
       { name: 'coverage', it: 'craco test --env=jsdom --coverage --watchAll=false' },
     ]);
     await this.npmInstall();
-
-    this.prints.scriptSucceeded(!this._flags.install);
   }
 
   /**
@@ -193,8 +195,6 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
       { name: 'test', it: 'flex-plugin test --env=jsdom' },
     ]);
     await this.npmInstall();
-
-    this.prints.scriptSucceeded(!this._flags.install);
   }
 
   /**
@@ -346,15 +346,22 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
     if (!this._flags.install) {
       return;
     }
+    const cmd = this._flags.yarn ? 'yarn' : 'npm';
 
-    await progress('Installing dependencies', async () => {
-      const { exitCode, stderr } = await spawn('npm', [
-        'install',
-        '--no-fund',
-        '--no-audit',
-        '--no-progress',
-        '--silent',
-      ]);
+    await progress('Cleaning up node_modules and lock files', async () => {
+      await rimraf.sync(join(this.cwd, 'node_modules'));
+      await rimraf.sync(join(this.cwd, 'package-lock.json'));
+      await rimraf.sync(join(this.cwd, 'yarn.lock'));
+    });
+    await progress(`Installing dependencies using ${cmd}`, async () => {
+      const args = ['install'];
+      if (this._flags.yarn) {
+        args.push('--silent');
+      } else {
+        args.push('--quiet', '--no-fund', '--no-audit', '--no-progress', '--silent');
+      }
+
+      const { exitCode, stderr } = await spawn(cmd, args);
       if (exitCode || stderr) {
         this._logger.error(stderr);
         this.exit(1);
