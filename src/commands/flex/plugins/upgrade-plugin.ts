@@ -1,12 +1,12 @@
 import { join } from 'path';
 
+import rimraf from 'rimraf';
 import semver from 'semver';
 import packageJson from 'package-json';
 import { progress } from 'flex-plugins-utils-logger';
 import { flags } from '@oclif/parser';
 import spawn from 'flex-plugins-utils-spawn';
 import { TwilioApiError } from 'flex-plugins-utils-exception';
-import rimraf from 'rimraf';
 
 import FlexPlugin, { ConfigData, PkgCallback, SecureStorage } from '../../../sub-commands/flex-plugin';
 import { createDescription, instanceOf } from '../../../utils/general';
@@ -128,6 +128,9 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
         break;
     }
 
+    await this.cleanupNodeModules();
+    await this.npmInstall();
+
     this.prints.scriptSucceeded(!this._flags.install);
   }
 
@@ -149,7 +152,6 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
       { name: 'start', it: 'react-app-rewired start', pre: 'flex-check-start' },
       { name: 'test', it: 'react-app-rewired test --env=jsdom' },
     ]);
-    await this.npmInstall();
   }
 
   /**
@@ -171,7 +173,6 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
       { name: 'test', it: 'craco test --env=jsdom' },
       { name: 'coverage', it: 'craco test --env=jsdom --coverage --watchAll=false' },
     ]);
-    await this.npmInstall();
   }
 
   /**
@@ -194,7 +195,6 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
       { name: 'start', it: 'flex-plugin start', pre: 'npm run bootstrap' },
       { name: 'test', it: 'flex-plugin test --env=jsdom' },
     ]);
-    await this.npmInstall();
   }
 
   /**
@@ -204,7 +204,6 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
     this.prints.upgradeToLatest();
 
     await this.updatePackageJson(this.getDependencyUpdates());
-    await this.npmInstall();
   }
 
   /**
@@ -340,6 +339,17 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
   }
 
   /**
+   * Cleans up node_modules and lockfiles
+   */
+  async cleanupNodeModules() {
+    await progress('Cleaning up node_modules and lock files', async () => {
+      await rimraf.sync(join(this.cwd, 'node_modules'));
+      await rimraf.sync(join(this.cwd, 'package-lock.json'));
+      await rimraf.sync(join(this.cwd, 'yarn.lock'));
+    });
+  }
+
+  /**
    * Runs npm install if flag is set
    */
   async npmInstall() {
@@ -348,11 +358,6 @@ export default class FlexPluginsUpgradePlugin extends FlexPlugin {
     }
     const cmd = this._flags.yarn ? 'yarn' : 'npm';
 
-    await progress('Cleaning up node_modules and lock files', async () => {
-      await rimraf.sync(join(this.cwd, 'node_modules'));
-      await rimraf.sync(join(this.cwd, 'package-lock.json'));
-      await rimraf.sync(join(this.cwd, 'yarn.lock'));
-    });
     await progress(`Installing dependencies using ${cmd}`, async () => {
       const args = ['install'];
       if (this._flags.yarn) {

@@ -45,9 +45,7 @@ const scriptSucceeded = (logger: Logger) => (needsInstall: boolean) => {
   logger.info('**Next Steps:**');
   const helpInstruction = '{{$ twilio flex:plugins --help}} to find out more about the new CLI';
   if (needsInstall) {
-    logger.info(
-      `Run {{$ rm -rf node_modules package-lock.json yarn.lock}} to cleanup working directory, then {{$ npm install}} to update all the dependencies, and then ${helpInstruction}.`,
-    );
+    logger.info(`Run {{{$ npm install}} to update all the dependencies and then ${helpInstruction}.`);
   } else {
     logger.info(`Run ${helpInstruction}.`);
   }
