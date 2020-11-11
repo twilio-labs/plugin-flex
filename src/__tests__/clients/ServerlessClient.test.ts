@@ -6,13 +6,16 @@ import ServerlessClient from '../../clients/ServerlessClient';
 
 describe('ServerlessClient', () => {
   const serviceSid = 'ZS00000000000000000000000000000000';
+  const buildSid = 'ZB00000000000000000000000000000000';
   const pluginName = 'plugin-name';
 
+  const fetchService = sinon.stub();
   const listEnv = sinon.stub();
   const getBuild = sinon.stub();
   const getService = sinon.stub();
   const createService = sinon.stub();
   getService.returns({
+    fetch: fetchService,
     environments: {
       list: listEnv,
     },
@@ -61,6 +64,75 @@ describe('ServerlessClient', () => {
       };
       // @ts-ignore
       expect(client.getLegacyAsset(build, pluginName)).to.equal(build.assetVersions[0]);
+    });
+  });
+
+  describe('getBuildAndEnvironment', () => {
+    const service = { sid: serviceSid };
+    const environment = { uniqueName: pluginName, buildSid: null };
+
+    // @ts-ignore
+    const getBuildAndEnvironment = async () => client.getBuildAndEnvironment(serviceSid, pluginName);
+
+    beforeEach(() => {
+      fetchService.resetHistory();
+      getService.resetHistory();
+      listEnv.resetHistory();
+      getBuild.resetHistory();
+    });
+
+    it('should return empty object if no service is found', async () => {
+      fetchService.returns(Promise.resolve(null));
+      const result = await getBuildAndEnvironment();
+
+      expect(result).to.eql({});
+      expect(fetchService).to.have.been.called;
+      expect(getService).to.have.been.called;
+      expect(getService).to.have.been.calledWith(serviceSid);
+      expect(listEnv).not.to.have.been.called;
+      expect(getBuild).not.to.have.been.called;
+    });
+
+    it('should return empty object if no environment is found', async () => {
+      fetchService.returns(Promise.resolve(service));
+      listEnv.returns(Promise.resolve([]));
+      const result = await getBuildAndEnvironment();
+
+      expect(result).to.eql({});
+      expect(fetchService).to.have.been.called;
+      expect(getService).to.have.been.called;
+      expect(getService).to.have.been.calledWith(serviceSid);
+      expect(listEnv).to.have.been.calledOnce;
+      expect(getBuild).not.to.have.been.called;
+    });
+
+    it('should return empty object if environment has no buildSid', async () => {
+      fetchService.returns(Promise.resolve(service));
+      listEnv.returns(Promise.resolve([environment]));
+      const result = await getBuildAndEnvironment();
+
+      expect(result).to.eql({});
+      expect(fetchService).to.have.been.called;
+      expect(getService).to.have.been.called;
+      expect(getService).to.have.been.calledWith(serviceSid);
+      expect(listEnv).to.have.been.calledOnce;
+      expect(getBuild).not.to.have.been.called;
+    });
+
+    it('should return build and environment', async () => {
+      const env = { ...environment, buildSid };
+      const build = { sid: buildSid };
+      fetchService.returns(Promise.resolve(service));
+      listEnv.returns(Promise.resolve([env]));
+      getBuild.returns(Promise.resolve(build));
+      const result = await getBuildAndEnvironment();
+
+      expect(result).to.eql({ environment: env, build });
+      expect(fetchService).to.have.been.called;
+      expect(getService).to.have.been.called;
+      expect(getService).to.have.been.calledWith(serviceSid);
+      expect(listEnv).to.have.been.calledOnce;
+      expect(getBuild).to.have.been.called;
     });
   });
 
