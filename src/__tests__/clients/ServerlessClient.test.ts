@@ -137,6 +137,11 @@ describe('ServerlessClient', () => {
   });
 
   describe('hasLegacy', () => {
+    after(() => {
+      // @ts-ignore
+      client.getBuildAndEnvironment.restore();
+    });
+
     it('should return false if no build is found', async () => {
       // @ts-ignore
       sinon.stub(client, 'getBuildAndEnvironment').returns(Promise.resolve({}));
