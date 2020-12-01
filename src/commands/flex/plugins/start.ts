@@ -137,10 +137,14 @@ export default class FlexPluginsStart extends FlexPlugin {
    * @private
    */
   private isMultiPlugin() {
-    if (this._flags['include-remote'] || this._flags.name.length > 1) {
+    if (this._flags['include-remote']) {
       return true;
     }
+    const { name } = this._flags;
+    if (!name) {
+      return false;
+    }
 
-    return this._flags.name.length === 1 && this.pkg.name !== this._flags.name[0];
+    return name.length === 1 && this.pkg.name !== this._flags.name[0];
   }
 }
