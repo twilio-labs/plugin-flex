@@ -1,6 +1,6 @@
 {
   "name": "@twilio-labs/plugin-flex",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "description": "Create, develop and deploy Flex plugins using the Twilio CLI",
   "keywords": [
     "oclif-plugin"
@@ -36,20 +36,20 @@
   "dependencies": {
     "@oclif/command": "^1.8.0",
     "@oclif/config": "^1.17.0",
-    "@twilio/cli-core": "5.10.0",
+    "@twilio/cli-core": "5.15.1",
     "clear": "^0.1.0",
-    "create-flex-plugin": "^3.14.4",
-    "flex-plugin-scripts": "^3.14.2"
+    "create-flex-plugin": "^3.14.5",
+    "flex-plugin-scripts": "^3.14.5"
   },
   "devDependencies": {
-    "@oclif/dev-cli": "^1.22.2",
-    "@oclif/test": "^1.2.7",
+    "@oclif/dev-cli": "^1.26.0",
+    "@oclif/test": "^1.2.8",
     "@twilio/cli-test": "^2.1.1",
-    "eslint": "^7.11.0",
-    "eslint-config-twilio": "^1.29.0",
-    "globby": "^11.0.1",
-    "husky": "^4.3.0",
-    "keytar": "^7.0.0"
+    "eslint": "^7.17.0",
+    "eslint-config-twilio": "^1.31.0",
+    "globby": "^11.0.2",
+    "husky": "^4.3.7",
+    "keytar": "^7.3.0"
   },
   "engines": {
     "node": ">=8.0.0"
