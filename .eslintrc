@@ -1,8 +1,19 @@
 {
   "extends": [
-    "twilio"
+    "twilio-ts",
+    "twilio-mocha"
   ],
   "parserOptions": {
-    "ecmaVersion": 2017
+    "ecmaVersion": 2018,
+    "project": "./tsconfig.lint.json"
+  },
+  "ignorePatterns": [
+    "*.d.ts"
+  ],
+  "rules": {
+    "import/no-unused-modules": "off",
+    "@typescript-eslint/ban-ts-ignore": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off"
   }
 }

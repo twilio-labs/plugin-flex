@@ -33,7 +33,9 @@ $ brew tap twilio/brew && brew install twilio
 
 ```sh-session
 $ twilio plugins:install @twilio-labs/plugin-flex
+
 $ twilio --help flex
+
 USAGE
   $ twilio flex
 ...
@@ -44,13 +46,25 @@ USAGE
 <!-- commands -->
 * [`twilio flex:plugins:build`](#twilio-flexpluginsbuild)
 * [`twilio flex:plugins:create NAME`](#twilio-flexpluginscreate-name)
+* [`twilio flex:plugins:create-configuration`](#twilio-flexpluginscreate-configuration)
 * [`twilio flex:plugins:deploy`](#twilio-flexpluginsdeploy)
-* [`twilio flex:plugins:remove`](#twilio-flexpluginsremove)
+* [`twilio flex:plugins:describe:configuration`](#twilio-flexpluginsdescribeconfiguration)
+* [`twilio flex:plugins:describe:plugin`](#twilio-flexpluginsdescribeplugin)
+* [`twilio flex:plugins:describe:plugin-version`](#twilio-flexpluginsdescribeplugin-version)
+* [`twilio flex:plugins:describe:release`](#twilio-flexpluginsdescriberelease)
+* [`twilio flex:plugins:diff ID1 [ID2]`](#twilio-flexpluginsdiff-id1-id2)
+* [`twilio flex:plugins:list:configurations`](#twilio-flexpluginslistconfigurations)
+* [`twilio flex:plugins:list:plugin-versions`](#twilio-flexpluginslistplugin-versions)
+* [`twilio flex:plugins:list:plugins`](#twilio-flexpluginslistplugins)
+* [`twilio flex:plugins:list:releases`](#twilio-flexpluginslistreleases)
+* [`twilio flex:plugins:release`](#twilio-flexpluginsrelease)
 * [`twilio flex:plugins:start`](#twilio-flexpluginsstart)
+* [`twilio flex:plugins:test`](#twilio-flexpluginstest)
+* [`twilio flex:plugins:upgrade-plugin`](#twilio-flexpluginsupgrade-plugin)
 
 ## `twilio flex:plugins:build`
 
-Builds your Flex plugin and creates a JavaScript and sourcemap bundle. This command needs to be invoked inside a plugin directory.
+Builds the Flex plugin and creates a JavaScript and sourcemap bundle. This command needs to be invoked inside a plugin directory.
 
 ```
 USAGE
@@ -58,11 +72,12 @@ USAGE
 
 OPTIONS
   -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
-  -o=(columns|json|tsv)            [default: columns] Format of command output.
   -p, --profile=profile            Shorthand identifier for your profile.
+  --clear-terminal                 Clears the terminal before running the command
+  --json                           Outputs the result of the command as json string
 ```
 
-_See code: [src/commands/flex/plugins/build.js](https://github.com/twilio-labs/plugin-flex/blob/v0.1.5/src/commands/flex/plugins/build.js)_
+_See code: [src/commands/flex/plugins/build.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/build.ts)_
 
 ## `twilio flex:plugins:create NAME`
 
@@ -79,28 +94,53 @@ ARGUMENTS
         name	Name of your plugin. Needs to start with plugin-
 
 OPTIONS
-  -a, --accountSid=accountSid      The Account SID for your Flex Project
+  -a, --accountSid=accountSid  The Account SID for your Flex Project
   -h, --help=help
-  -i, --install                    Auto-install dependencies
-  -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
-  -o=(columns|json|tsv)            [default: columns] Format of command output.
-  -p, --profile=profile            Shorthand identifier for your profile.
-  -r, --runtimeUrl                 Auto-install dependencies
-  -s, --typescript                 Create a TypeScript project
-  -t, --template=template          A URL to a template directory
+  -i, --install                Auto-install dependencies
+  -r, --runtimeUrl             Auto-install dependencies
+  -s, --typescript             Create a TypeScript project
+  -t, --template=template      A URL to a template directory
   -v, --version=version
-  -y, --yarn                       Use yarn as your dependency manager
+  -y, --yarn                   Use yarn as your dependency manager
 
 DESCRIPTION
   Arguments:
-  name	Name of your plugin. Needs to start with plugin-.
+  name	Name of your plugin. Needs to start with plugin-. This command needs to be invoked inside a plugin directory.
 ```
 
-_See code: [src/commands/flex/plugins/create.js](https://github.com/twilio-labs/plugin-flex/blob/v0.1.5/src/commands/flex/plugins/create.js)_
+_See code: [src/commands/flex/plugins/create.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/create.ts)_
+
+## `twilio flex:plugins:create-configuration`
+
+Creates a Flex Plugin Configuration. This command needs to be invoked inside a plugin directory.
+
+```
+USAGE
+  $ twilio flex:plugins:create-configuration
+
+OPTIONS
+  -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
+  -p, --profile=profile            Shorthand identifier for your profile.
+  --clear-terminal                 Clears the terminal before running the command
+
+  --description=description        (required) [default: The description of this Flex Plugin Configuration] The
+                                   description of this Flex Plugin Configuration
+
+  --name=name                      (required) [default: Autogenerated Release 1610054834826] The friendly name of the
+                                   Flex Plugin Configuration
+
+  --new                            Creates a new Flex Plugin Configuration, otherwise will append to existing active
+                                   Configuration
+
+  --plugin=plugin                  (required) The plugin to install, formatted as pluginName@version. Use additional
+                                   --plugin to provide other plugins to install
+```
+
+_See code: [src/commands/flex/plugins/create-configuration.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/create-configuration.ts)_
 
 ## `twilio flex:plugins:deploy`
 
-Builds and deploys your Flex plugin to Twilio Assets. This command needs to be invoked inside a plugin directory.
+Builds and deploys a new version of the Flex plugin to your Flex application. This command needs to be invoked inside a plugin directory.
 
 ```
 USAGE
@@ -108,31 +148,216 @@ USAGE
 
 OPTIONS
   -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
-  -o=(columns|json|tsv)            [default: columns] Format of command output.
   -p, --profile=profile            Shorthand identifier for your profile.
+  --changelog=changelog            (required) The changes (added/removed) made in this plugin version
+  --clear-terminal                 Clears the terminal before running the command
+  --description=description        The description of this Flex plugin
+  --major                          Publishes the version as a major (SemVer)
+  --minor                          Publishes the version as a minor (SemVer)
+  --patch                          Publishes the version as a patch (SemVer); this is the default
+  --public                         Publishes the plugin as a public Twilio Asset; default is private
+  --version=version                Publishes the version (SemVer)
 ```
 
-_See code: [src/commands/flex/plugins/deploy.js](https://github.com/twilio-labs/plugin-flex/blob/v0.1.5/src/commands/flex/plugins/deploy.js)_
+_See code: [src/commands/flex/plugins/deploy.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/deploy.ts)_
 
-## `twilio flex:plugins:remove`
+## `twilio flex:plugins:describe:configuration`
 
-Removes your Flex plugin. This command needs to be invoked inside a plugin directory.
+Provides details of the Flex Plugin Configuration like status, description and its associated Plugins.
 
 ```
 USAGE
-  $ twilio flex:plugins:remove
+  $ twilio flex:plugins:describe:configuration
 
 OPTIONS
   -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
-  -o=(columns|json|tsv)            [default: columns] Format of command output.
   -p, --profile=profile            Shorthand identifier for your profile.
+  --clear-terminal                 Clears the terminal before running the command
+  --json                           Outputs the result of the command as json string
+  --sid=sid                        (required) The Flex Plugin Configuration SID
 ```
 
-_See code: [src/commands/flex/plugins/remove.js](https://github.com/twilio-labs/plugin-flex/blob/v0.1.5/src/commands/flex/plugins/remove.js)_
+_See code: [src/commands/flex/plugins/describe/configuration.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/describe/configuration.ts)_
+
+## `twilio flex:plugins:describe:plugin`
+
+Provides details of the Flex Plugin like status, description and its Flex Plugin Versions.
+
+```
+USAGE
+  $ twilio flex:plugins:describe:plugin
+
+OPTIONS
+  -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
+  -p, --profile=profile            Shorthand identifier for your profile.
+  --clear-terminal                 Clears the terminal before running the command
+  --json                           Outputs the result of the command as json string
+  --name=name                      (required) The name of the Flex Plugin to describe
+```
+
+_See code: [src/commands/flex/plugins/describe/plugin.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/describe/plugin.ts)_
+
+## `twilio flex:plugins:describe:plugin-version`
+
+Provides details of the Flex Plugin Version like changelog, status and the url of the plugin package.
+
+```
+USAGE
+  $ twilio flex:plugins:describe:plugin-version
+
+OPTIONS
+  -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
+  -p, --profile=profile            Shorthand identifier for your profile.
+  --clear-terminal                 Clears the terminal before running the command
+  --json                           Outputs the result of the command as json string
+  --name=name                      (required) The Flex Plugin name of the Plugin Version to describe
+  --version=version                (required) The Flex Plugin Version to describe
+```
+
+_See code: [src/commands/flex/plugins/describe/plugin-version.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/describe/plugin-version.ts)_
+
+## `twilio flex:plugins:describe:release`
+
+Provides details of the Flex Plugin Release like the underlying Plugin Configuration and Plugins.
+
+```
+USAGE
+  $ twilio flex:plugins:describe:release
+
+OPTIONS
+  -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
+  -p, --profile=profile            Shorthand identifier for your profile.
+  --active
+  --clear-terminal                 Clears the terminal before running the command
+  --json                           Outputs the result of the command as json string
+  --sid=sid                        The Flex Plugin Release SID to describe
+```
+
+_See code: [src/commands/flex/plugins/describe/release.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/describe/release.ts)_
+
+## `twilio flex:plugins:diff ID1 [ID2]`
+
+Finds the diff between two Flex Plugin Configurations.
+
+```
+USAGE
+  $ twilio flex:plugins:diff ID1 [ID2]
+
+ARGUMENTS
+  ID1  The first Flex Plugin Configuration SID
+  ID2  The second Flex Plugin Configuration SID
+
+OPTIONS
+  -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
+  -p, --profile=profile            Shorthand identifier for your profile.
+  --clear-terminal                 Clears the terminal before running the command
+```
+
+_See code: [src/commands/flex/plugins/diff.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/diff.ts)_
+
+## `twilio flex:plugins:list:configurations`
+
+Lists the Flex Plugin Configuration on the account.
+
+```
+USAGE
+  $ twilio flex:plugins:list:configurations
+
+OPTIONS
+  -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
+  -p, --profile=profile            Shorthand identifier for your profile.
+  --clear-terminal                 Clears the terminal before running the command
+  --json                           Outputs the result of the command as json string
+```
+
+_See code: [src/commands/flex/plugins/list/configurations.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/list/configurations.ts)_
+
+## `twilio flex:plugins:list:plugin-versions`
+
+Lists the Flex Plugin Versions on the account.
+
+```
+USAGE
+  $ twilio flex:plugins:list:plugin-versions
+
+OPTIONS
+  -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
+  -p, --profile=profile            Shorthand identifier for your profile.
+  --clear-terminal                 Clears the terminal before running the command
+  --json                           Outputs the result of the command as json string
+  --name=name                      (required) The plugin name to list its versions
+```
+
+_See code: [src/commands/flex/plugins/list/plugin-versions.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/list/plugin-versions.ts)_
+
+## `twilio flex:plugins:list:plugins`
+
+Lists the Flex Plugins on the account.
+
+```
+USAGE
+  $ twilio flex:plugins:list:plugins
+
+OPTIONS
+  -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
+  -p, --profile=profile            Shorthand identifier for your profile.
+  --clear-terminal                 Clears the terminal before running the command
+  --json                           Outputs the result of the command as json string
+```
+
+_See code: [src/commands/flex/plugins/list/plugins.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/list/plugins.ts)_
+
+## `twilio flex:plugins:list:releases`
+
+Lists the Flex Releases on the account.
+
+```
+USAGE
+  $ twilio flex:plugins:list:releases
+
+OPTIONS
+  -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
+  -p, --profile=profile            Shorthand identifier for your profile.
+  --clear-terminal                 Clears the terminal before running the command
+  --json                           Outputs the result of the command as json string
+```
+
+_See code: [src/commands/flex/plugins/list/releases.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/list/releases.ts)_
+
+## `twilio flex:plugins:release`
+
+Creates a Flex Plugin Release. Enables the plugins (passed as params or via the Flex Configuration) on your Flex application.
+
+```
+USAGE
+  $ twilio flex:plugins:release
+
+OPTIONS
+  -l=(debug|info|warn|error|none)        [default: info] Level of logging messages.
+  -p, --profile=profile                  Shorthand identifier for your profile.
+  --clear-terminal                       Clears the terminal before running the command
+
+  --configuration-sid=configuration-sid  The Flex Plugin Configuration SID to release; other options are not required
+                                         when using this option
+
+  --description=description              [default: The description of this Flex Plugin Configuration] The description of
+                                         this Flex Plugin Configuration
+
+  --name=name                            [default: Autogenerated Release 1610054834826] The friendly name of the Flex
+                                         Plugin Configuration
+
+  --new                                  Creates a new Flex Plugin Configuration, otherwise will append to existing
+                                         active Configuration
+
+  --plugin=plugin                        The plugin to install, formatted as pluginName@version. Use additional --plugin
+                                         to provide other plugins to install
+```
+
+_See code: [src/commands/flex/plugins/release.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/release.ts)_
 
 ## `twilio flex:plugins:start`
 
-Starts a dev-server to build your Flex plugin locally. This command needs to be invoked inside a plugin directory.
+Starts a dev-server to build the Flex plugin locally.
 
 ```
 USAGE
@@ -140,9 +365,50 @@ USAGE
 
 OPTIONS
   -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
-  -o=(columns|json|tsv)            [default: columns] Format of command output.
   -p, --profile=profile            Shorthand identifier for your profile.
+  --clear-terminal                 Clears the terminal before running the command
+  --include-remote                 Use this flag to include all remote plugins in your build (in Pilot)
+
+  --name=name                      The name of the plugin you would like to run. You can provide multiple to run them
+                                   all concurrently in the dev-environment (in Pilot)
 ```
 
-_See code: [src/commands/flex/plugins/start.js](https://github.com/twilio-labs/plugin-flex/blob/v0.1.5/src/commands/flex/plugins/start.js)_
+_See code: [src/commands/flex/plugins/start.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/start.ts)_
+
+## `twilio flex:plugins:test`
+
+Runs the test suite. This command needs to be invoked inside a plugin directory.
+
+```
+USAGE
+  $ twilio flex:plugins:test
+
+OPTIONS
+  -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
+  -p, --profile=profile            Shorthand identifier for your profile.
+  --clear-terminal                 Clears the terminal before running the command
+```
+
+_See code: [src/commands/flex/plugins/test.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/test.ts)_
+
+## `twilio flex:plugins:upgrade-plugin`
+
+Upgrades your plugin to use the latest version of the Plugin CLI.
+
+```
+USAGE
+  $ twilio flex:plugins:upgrade-plugin
+
+OPTIONS
+  -l=(debug|info|warn|error|none)  [default: info] Level of logging messages.
+  -p, --profile=profile            Shorthand identifier for your profile.
+  --beta                           If set, will upgrade to the latest beta version
+  --clear-terminal                 Clears the terminal before running the command
+  --install                        If set, will install the dependencies
+  --remove-legacy-plugin           Deletes legacy plugin bundle hosted on Twilio Assets (deployed via plugin builder v3)
+  --yarn                           Use yarn for installation
+  --yes                            If set, will answer yes to all prompts
+```
+
+_See code: [src/commands/flex/plugins/upgrade-plugin.ts](https://github.com/twilio-labs/plugin-flex/blob/v1.3.2-beta.0/src/commands/flex/plugins/upgrade-plugin.ts)_
 <!-- commandsstop -->

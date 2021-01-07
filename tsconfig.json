@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "outDir": "lib",
+    "baseUrl": ".",
+    "rootDir": "src",
+    "module": "commonjs",
+    "target": "es2017",
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": false,
+    "skipLibCheck": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "downlevelIteration": true,
+    "resolveJsonModule": true,
+    "types" : [
+      "node",
+      "mocha"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "src/__tests__/",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "lib",
+    "coverage"
+  ]
+}
