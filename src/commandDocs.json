@@ -35,7 +35,7 @@
     "flags": {
       "new": "Creates a new Flex Plugin Configuration, otherwise will append to existing active Configuration",
       "name": "The friendly name of the Flex Plugin Configuration",
-      "plugin": "The plugin to install, formatted as pluginName@version. Use additional --plugin to provide other plugins to install",
+      "plugin": "The plugin to install, formatted as pluginName@version. You may use pluginName@latest as a shortcut for installing the latest version of the plugin. Use additional --plugin to provide other plugins to install",
       "description": "The description of this Flex Plugin Configuration"
     },
     "defaults": {
