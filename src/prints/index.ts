@@ -4,6 +4,7 @@ import upgradePlugin from './upgradePlugin';
 import deploy from './deploy';
 import release from './release';
 import flexPlugin from './flexPlugin';
+import archiveResource from './archiveResource';
 
 export default (logger: Logger) => {
   return {
@@ -11,5 +12,6 @@ export default (logger: Logger) => {
     deploy: deploy(logger),
     release: release(logger),
     flexPlugin: flexPlugin(logger),
+    archiveResource: archiveResource(logger),
   };
 };
