@@ -1,4 +1,4 @@
-// eslint-disable-next-line spaced-comment, @typescript-eslint/triple-slash-reference, prefer-named-capture-group
+// eslint-disable-next-line spaced-comment, @typescript-eslint/triple-slash-reference
 /// <reference path="../module.d.ts" />
 
 import OClifConfig from '@oclif/config';
@@ -62,6 +62,7 @@ const mockUserConfig = async <C extends FlexPlugin>(command: C): Promise<C> => {
 const mockEnv = async <C extends FlexPlugin>(command: C): Promise<C> => {
   // Clear env
   Object.keys(process.env)
+    // eslint-disable-next-line prefer-named-capture-group
     .filter((k) => k.match(/^(TWILIO|SENDGRID)_/))
     .forEach((k) => delete process.env[k]);
 
