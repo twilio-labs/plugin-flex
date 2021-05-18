@@ -38,8 +38,8 @@
     "@oclif/config": "^1.17.0",
     "@twilio/cli-core": "5.15.1",
     "clear": "^0.1.0",
-    "create-flex-plugin": "^3.14.5",
-    "flex-plugin-scripts": "^3.14.5"
+    "create-flex-plugin": "^4.0.0",
+    "flex-plugin-scripts": "^4.0.0"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.26.0",
