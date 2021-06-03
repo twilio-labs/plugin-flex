@@ -1,3 +1,7 @@
+# Deprecated
+
+This repo is deprecated and has moved into [flex-plugin-builder monorepo](https://github.com/twilio/flex-plugin-builder).
+
 @twilio-labs/plugin-flex
 ========================
 
